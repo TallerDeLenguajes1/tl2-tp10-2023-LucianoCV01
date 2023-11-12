@@ -19,10 +19,10 @@
                 <td>@usuario.NombreDeUsuario</td>
                 <td>
                     <a asp-controller="Usuario" asp-action="ModificarUsuario"
-                        asp-route-idProducto="@usuario.Id">Modificar</a>
+                        asp-route-idUsuario="@usuario.Id">Modificar</a>
                 </td>
                 <td>
-                    <a asp-controller="Usuario" asp-action="EliminarUsuario" asp-route-idProducto="@usuario.Id"
+                    <a asp-controller="Usuario" asp-action="EliminarUsuario" asp-route-idUsuario="@usuario.Id"
                         onclick="return confirm('¿Estas seguro que quieres eliminar el elemento?')">Eliminar</a>
                 </td>
             </tr>

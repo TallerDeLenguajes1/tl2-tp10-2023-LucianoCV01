@@ -16,46 +16,38 @@ public class UsuarioController : Controller
     // ● En el controlador de usuarios : Listar, Crear, Modificar y Eliminar Usuarios.
     // Controlador LISTAR
     [HttpGet]
-    public IActionResult ListarUsuario(){
+    public IActionResult ListarUsuario()
+    {
         return View(manejoDeUsuarios.GetAll());
     }
     // Controlador CREAR
     [HttpGet]
-    public IActionResult CrearUsuario(){
+    public IActionResult CrearUsuario()
+    {
         return View(new Usuario());
     }
     [HttpPost]
-    public IActionResult CrearUsuario(Usuario u){
+    public IActionResult CrearUsuario(Usuario u)
+    {
         manejoDeUsuarios.Create(u);
         return RedirectToAction("ListarUsuario");
     }
-
-    // ------------------------------------------>
-
-    [HttpPost("api/usuario")] //Que devuelvo???
-    public ActionResult<Usuario> AgregarUsuario(Usuario u)
-    {
-        manejoDeUsuarios.Create(u);
-        return Ok(u);
-    }
+    // Controlador MODIFICAR ----> pq utilzar post en lugar de put 
     [HttpGet]
-    [Route("api/usuario")]
-    public ActionResult<List<Usuario>> GetListadoUsuario()
+    public IActionResult ModificarUsuario(int idUsuario)
     {
-        var listaUsuarios = manejoDeUsuarios.GetAll();
-        return Ok(listaUsuarios);
+        return View(manejoDeUsuarios.GetById(idUsuario));
     }
-    [HttpGet]
-    [Route("api/usuario/{Id}")]
-    public ActionResult<Usuario> GetUsuarioPorId(int Id)
+    [HttpPost]
+    public IActionResult ModificarUsuario(Usuario u)
     {
-        var usuarioBuscado = manejoDeUsuarios.GetById(Id);
-        return Ok(usuarioBuscado);
+        manejoDeUsuarios.Update(u.Id, u);
+        return RedirectToAction("ListarUsuario");
     }
-    [HttpPut("api/tarea/{Id}/Nombre")] //Que devuelvo???
-    public ActionResult<Usuario> ActualizarTarea(int Id, Usuario usuarioActualizado)
-    {
-        manejoDeUsuarios.Update(Id, usuarioActualizado);
-        return Ok(usuarioActualizado);
+    // Controlador ELIMINAR -------> [] de que tipo es el http o no hace falta indicarlo
+    // [HttpDelete]
+    public IActionResult EliminarUsuario(int idUsuario){
+        manejoDeUsuarios.Remove(idUsuario);
+        return RedirectToAction("ListarUsuario");
     }
 }
