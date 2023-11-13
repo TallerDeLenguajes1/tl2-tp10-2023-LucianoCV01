@@ -7,7 +7,7 @@ namespace EspacioRepositorios
     {
         private string cadenaConexion = "Data Source=DB/TP08-CosentinoLuciano.db;Cache=Shared";
 
-        public void Create(Tablero tablero) // no recibe id_usuario por ser FK
+        public void Create(int idUsuario, Tablero tablero)
         {
             var query = $"INSERT INTO Tablero (id_usuario_propietario, nombre, descripcion) VALUES (@usuario, @name, @descripcion)";
             using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
@@ -16,7 +16,7 @@ namespace EspacioRepositorios
                 connection.Open();
                 var command = new SqliteCommand(query, connection);
 
-                command.Parameters.Add(new SqliteParameter("@usuario", tablero.IdUsuarioPropietario));
+                command.Parameters.Add(new SqliteParameter("@usuario", idUsuario));
                 command.Parameters.Add(new SqliteParameter("@name", tablero.Nombre));
                 command.Parameters.Add(new SqliteParameter("@descripcion", tablero.Descripcion));
 
@@ -102,7 +102,7 @@ namespace EspacioRepositorios
             List<Tablero> tableros = new List<Tablero>();
             SqliteCommand command = connection.CreateCommand();
             command.CommandText = $"SELECT * FROM Tablero WHERE id_usuario_propietario = @propietario";
-            command.Parameters.Add(new SqliteParameter("@id", idUsuario));
+            command.Parameters.Add(new SqliteParameter("@propietario", idUsuario));
             connection.Open();
             using (SqliteDataReader reader = command.ExecuteReader())
             {

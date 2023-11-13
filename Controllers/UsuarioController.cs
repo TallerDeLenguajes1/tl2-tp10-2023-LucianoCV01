@@ -13,7 +13,6 @@ public class UsuarioController : Controller
         _logger = logger;
         manejoDeUsuarios = new UsuarioRepository();
     }
-    // ● En el controlador de usuarios : Listar, Crear, Modificar y Eliminar Usuarios.
     // Controlador LISTAR
     [HttpGet]
     public IActionResult ListarUsuario()
