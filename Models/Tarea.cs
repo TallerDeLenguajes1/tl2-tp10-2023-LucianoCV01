@@ -8,7 +8,7 @@ namespace tl2_tp10_2023_LucianoCV01.Models
         EstadoTarea estado;
         string? descripcion;
         string? color;
-        int idUsuarioAsignado;
+        int? idUsuarioAsignado;
 
         // Propiedades
         public int Id { get => id; set => id = value; }
@@ -17,7 +17,7 @@ namespace tl2_tp10_2023_LucianoCV01.Models
         public EstadoTarea Estado { get => estado; set => estado = value; }
         public string? Descripcion { get => descripcion; set => descripcion = value; }
         public string? Color { get => color; set => color = value; }
-        public int IdUsuarioAsignado { get => idUsuarioAsignado; set => idUsuarioAsignado = value; }
+        public int? IdUsuarioAsignado { get => idUsuarioAsignado; set => idUsuarioAsignado = value; }
     }
     public enum EstadoTarea
     {

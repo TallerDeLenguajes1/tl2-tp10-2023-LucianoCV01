@@ -1,71 +1,57 @@
-// using Microsoft.AspNetCore.Mvc;
-// using tl2_tp10_2023_LucianoCV01.Models;
-// using EspacioRepositorios;
+using Microsoft.AspNetCore.Mvc;
+using tl2_tp10_2023_LucianoCV01.Models;
+using EspacioRepositorios;
 
-// namespace tl2_tp10_2023_LucianoCV01.Controllers;
+namespace tl2_tp10_2023_LucianoCV01.Controllers;
 
-// [ApiController]
-// [Route("[controller]")]
-// public class TareaController : ControllerBase
-// {
-//     private TareaRepository manejoDeTareas; // Utilizo la clase o la interfaz?
-//     private readonly ILogger<TareaController> _logger;
+public class TareaController : Controller
+{
+    const int idTableroPrueba = 1;
+    private ITareaRepository manejoDeTareas;
+    private readonly ILogger<TareaController> _logger;
 
-//     public TareaController(ILogger<TareaController> logger)
-//     {
-//         _logger = logger;
-//         manejoDeTareas = new();
-//     }
-
-//     [HttpPost("api/tarea")] //Que devuelvo??? Le cambio el nombre a la ruta?
-//     public ActionResult<Tarea> AgregarUsuario(int idTablero, Tarea t)
-//     {
-//         manejoDeTareas.Create(idTablero, t);
-//         return Ok(t);
-//     }
-
-//     [HttpPut("api/Tarea/{id}/Nombre/{Nombre}")] //Que devuelvo??? Esta bien hecho??
-//     public ActionResult<int> ActualizarTareaPorNombre(int id, string Nombre)
-//     {
-//         manejoDeTareas.ActualizarNombre(id, Nombre);
-//         return Ok(id);
-//     }
-
-//     [HttpPut("api/Tarea/{id}/Estado/{estado}")] //Que devuelvo??? Esta bien hecho??
-//     public ActionResult<int> ActualizarTareaPorEstado(int id, int estado)
-//     {
-//         manejoDeTareas.ActualizarEstado(id, estado);
-//         return Ok(id);
-//     }
-
-//     [HttpDelete("api/Tarea/{id}")] // Que devuelvo??
-//     public ActionResult<int> EliminarTareaPorId(int id)
-//     {
-//         manejoDeTareas.Remove(id);
-//         return Ok(id);
-//     }
-
-//     [HttpGet]
-//     [Route("api/Tarea/{Estado}")] // bien hecho??
-//     public ActionResult<int> GetCantidadPorEstado(int Estado)
-//     {
-//         var listaTareas = manejoDeTareas.GetByEstado(Estado);
-//         return Ok(listaTareas.Count);
-//     }
-
-//     [HttpGet]
-//     [Route("api/Tarea/Usuario/{Id}")]
-//     public ActionResult<List<Tarea>> GetTareaPorIdUsuario(int Id)
-//     {
-//         var listaTareas = manejoDeTareas.GetByIdUsuario(Id);
-//         return Ok(listaTareas);
-//     }
-
-//     [HttpGet]
-//     [Route("api/Tarea/Tablero/{Id}")]
-//     public ActionResult<List<Tarea>> GetTareaPorIdTablero(int Id)
-//     {
-//         var listaTareas = manejoDeTareas.GetByIdTablero(Id);
-//         return Ok(listaTareas);
-//     }
-// }
+    public TareaController(ILogger<TareaController> logger)
+    {
+        _logger = logger;
+        manejoDeTareas = new TareaRepository();
+    }
+        // En el controlador de tareas: Listar, Crear, Modificar y Eliminar Tareas. (Por el
+        // momento asuma que el tablero al que pertenece la tarea es siempre la misma, y que 
+        // no posee usuario asignado)
+    // Controlador LISTAR 
+    [HttpGet]
+    public IActionResult ListarTarea()
+    {
+        return View(manejoDeTareas.GetByIdTablero(idTableroPrueba));
+    }
+    // Controlador CREAR
+    [HttpGet]
+    public IActionResult CrearTarea()
+    {
+        return View(new Tarea());
+    }
+    [HttpPost]
+    public IActionResult CrearTarea(Tarea t)
+    {
+        manejoDeTareas.Create(idTableroPrueba, t);
+        return RedirectToAction("ListarTarea");
+    }
+    // Controlador MODIFICAR ----> pq utilzar post en lugar de put 
+    [HttpGet]
+    public IActionResult ModificarTarea(int idTarea)
+    {
+        return View(manejoDeTareas.GetById(idTarea));
+    }
+    [HttpPost]
+    public IActionResult ModificarTarea(Tarea t)
+    {
+        manejoDeTareas.Update(t.Id, t);
+        return RedirectToAction("ListarTarea");
+    }
+    // Controlador ELIMINAR -------> [] de que tipo es el http o no hace falta indicarlo
+    // [HttpDelete]
+    public IActionResult EliminarTarea(int idTarea){
+        manejoDeTareas.Remove(idTarea);
+        return RedirectToAction("ListarTarea");
+    }
+}
