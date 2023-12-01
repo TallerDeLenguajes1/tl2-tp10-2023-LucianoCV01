@@ -9,7 +9,7 @@ namespace EspacioRepositorios
 
         public void Create(Usuario usuario)
         {
-            var query = $"INSERT INTO Usuario (nombre_de_usuario) VALUES (@name)";
+            var query = $"INSERT INTO Usuario (nombre_de_usuario, contrasenia, rol) VALUES (@name, @contrasenia, @rol)";
             using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
             {
 
@@ -17,6 +17,10 @@ namespace EspacioRepositorios
                 var command = new SqliteCommand(query, connection);
 
                 command.Parameters.Add(new SqliteParameter("@name", usuario.NombreDeUsuario));
+
+                command.Parameters.Add(new SqliteParameter("@contrasenia", usuario.Contrasenia));
+
+                command.Parameters.Add(new SqliteParameter("@rol", usuario.Rol));
 
                 command.ExecuteNonQuery();
 
@@ -25,13 +29,17 @@ namespace EspacioRepositorios
         }
         public void Update(int id, Usuario usuario)
         {
-            var query = $"UPDATE Usuario SET nombre_de_usuario = (@name) WHERE id_usuario = (@id);";
+            var query = $"UPDATE Usuario SET nombre_de_usuario = (@name), contrasenia = (@contrasenia), rol = (@rol) WHERE id_usuario = (@id);";
             using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
             {
                 connection.Open();
                 var command = new SqliteCommand(query, connection);
 
                 command.Parameters.Add(new SqliteParameter("@name", usuario.NombreDeUsuario));
+
+                command.Parameters.Add(new SqliteParameter("@contrasenia", usuario.Contrasenia));
+                
+                command.Parameters.Add(new SqliteParameter("@rol", usuario.Rol));
 
                 command.Parameters.Add(new SqliteParameter("@id", id));
 
@@ -56,7 +64,9 @@ namespace EspacioRepositorios
                         var usuario = new Usuario
                         {
                             Id = Convert.ToInt32(reader["id_usuario"]),
-                            NombreDeUsuario = reader["nombre_de_usuario"].ToString()
+                            NombreDeUsuario = reader["nombre_de_usuario"].ToString(),
+                            Contrasenia = reader["contrasenia"].ToString(),
+                            Rol = (Rol)Convert.ToInt32(reader["rol"]) 
                         };
                         usuarios.Add(usuario);
                     }
@@ -79,6 +89,8 @@ namespace EspacioRepositorios
                 {
                     usuario.Id = Convert.ToInt32(reader["id_usuario"]);
                     usuario.NombreDeUsuario = reader["nombre_de_usuario"].ToString();
+                    usuario.Contrasenia = reader["contrasenia"].ToString();
+                    usuario.Rol = (Rol)Convert.ToInt32(reader["rol"]);
                 }
             }
             connection.Close();

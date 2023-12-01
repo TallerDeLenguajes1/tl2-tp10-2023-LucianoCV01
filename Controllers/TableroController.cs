@@ -17,11 +17,26 @@ public class TableroController : Controller
     }
     // En el controlador de tableros: Listar, Crear, Modificar y Eliminar Tableros. (Por el
     // momento asuma que el usuario propietario es siempre el mismo)
-     // Controlador LISTAR
+    // Controlador LISTAR
     [HttpGet]
     public IActionResult ListarTablero()
     {
-        return View(manejoDeTableros.GetByIdUsuario(idUsuarioPrueba));
+        if (isAdmin())
+        {
+            return View(manejoDeTableros.GetAll());
+        }
+        else
+        {
+            if (HttpContext.Session.GetString("Rol") == "operador") // Cambiar la funcion isAdmin por getRol
+            {
+                return View(manejoDeTableros.GetByIdUsuario(Int32.Parse(HttpContext.Session.GetString("Id")!)));
+            } 
+            else
+            {
+                return View(); 
+                // PONER EN EL ERROR 
+            } 
+        }
     }
     // Controlador CREAR
     [HttpGet]
@@ -49,8 +64,17 @@ public class TableroController : Controller
     }
     // Controlador ELIMINAR -------> [] de que tipo es el http o no hace falta indicarlo
     // [HttpDelete]
-    public IActionResult EliminarTablero(int idTablero){
+    public IActionResult EliminarTablero(int idTablero)
+    {
         manejoDeTableros.Remove(idTablero);
         return RedirectToAction("ListarTablero");
+    }
+
+    private bool isAdmin()
+    {
+        if (HttpContext.Session != null && HttpContext.Session.GetString("Rol") == "admin")
+            return true;
+
+        return false;
     }
 }

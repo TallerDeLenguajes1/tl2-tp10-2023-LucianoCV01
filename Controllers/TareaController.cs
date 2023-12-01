@@ -15,14 +15,29 @@ public class TareaController : Controller
         _logger = logger;
         manejoDeTareas = new TareaRepository();
     }
-        // En el controlador de tareas: Listar, Crear, Modificar y Eliminar Tareas. (Por el
-        // momento asuma que el tablero al que pertenece la tarea es siempre la misma, y que 
-        // no posee usuario asignado)
+    // En el controlador de tareas: Listar, Crear, Modificar y Eliminar Tareas. (Por el
+    // momento asuma que el tablero al que pertenece la tarea es siempre la misma, y que 
+    // no posee usuario asignado)
     // Controlador LISTAR 
     [HttpGet]
     public IActionResult ListarTarea()
     {
-        return View(manejoDeTareas.GetByIdTablero(idTableroPrueba));
+        if (isAdmin())
+        {
+            return View(manejoDeTareas.GetAll()); // Hacer get all tareas
+        }
+        else
+        {
+            if (HttpContext.Session.GetString("Rol") == "operador") // Cambiar la funcion isAdmin por getRol
+            {
+                return View(manejoDeTareas.GetByIdUsuario(Int32.Parse(HttpContext.Session.GetString("Id")!)));
+            }
+            else
+            {
+                return View();
+                // PONER EN EL ERROR 
+            }
+        }
     }
     // Controlador CREAR
     [HttpGet]
@@ -50,8 +65,17 @@ public class TareaController : Controller
     }
     // Controlador ELIMINAR -------> [] de que tipo es el http o no hace falta indicarlo
     // [HttpDelete]
-    public IActionResult EliminarTarea(int idTarea){
+    public IActionResult EliminarTarea(int idTarea)
+    {
         manejoDeTareas.Remove(idTarea);
         return RedirectToAction("ListarTarea");
+    }
+
+    private bool isAdmin()
+    {
+        if (HttpContext.Session != null && HttpContext.Session.GetString("Rol") == "admin")
+            return true;
+
+        return false;
     }
 }
