@@ -1,16 +1,20 @@
+using tl2_tp10_2023_LucianoCV01.ViewModels;
 namespace tl2_tp10_2023_LucianoCV01.Models
 {
     public class Tablero
     {
-        int id;
-        int idUsuarioPropietario;
-        string? nombre;
-        string? descripcion;
+        public int Id { get; set; }
+        public int IdUsuarioPropietario { get; set; }
+        public string Nombre { get; set; }
+        public string? Descripcion { get; set; }
 
-        // Propiedades
-        public int Id { get => id; set => id = value; }
-        public int IdUsuarioPropietario { get => idUsuarioPropietario; set => idUsuarioPropietario = value; }
-        public string? Nombre { get => nombre; set => nombre = value; }
-        public string? Descripcion { get => descripcion; set => descripcion = value; }
+        public Tablero()
+        {
+        }
+        public Tablero(CrearTableroViewModel t)
+        {
+            Nombre = t.Nombre;
+            Descripcion = t.Descripcion;
+        }
     }
 }

@@ -1,81 +1,116 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using tl2_tp10_2023_LucianoCV01.Models;
-using EspacioRepositorios;
+using TP10.Models;
+using TP10.Repository;
+using TP10.ViewModels;
 
-namespace tl2_tp10_2023_LucianoCV01.Controllers;
+namespace TP10.Controllers;
 
 public class TareaController : Controller
 {
-    const int idTableroPrueba = 1;
-    private ITareaRepository manejoDeTareas;
     private readonly ILogger<TareaController> _logger;
+    private ITareaRepository repositorioTarea;
 
     public TareaController(ILogger<TareaController> logger)
     {
         _logger = logger;
-        manejoDeTareas = new TareaRepository();
+        repositorioTarea = new TareaRepository();
     }
-    // En el controlador de tareas: Listar, Crear, Modificar y Eliminar Tareas. (Por el
-    // momento asuma que el tablero al que pertenece la tarea es siempre la misma, y que 
-    // no posee usuario asignado)
     // Controlador LISTAR 
     [HttpGet]
-    public IActionResult ListarTarea()
+    public IActionResult ListarTarea(int idTablero)
     {
-        if (isAdmin())
+        if (!isLogin())
         {
-            return View(manejoDeTareas.GetAll()); // Hacer get all tareas
+            return RedirectToAction("Error");
         }
-        else
-        {
-            if (HttpContext.Session.GetString("Rol") == "operador") // Cambiar la funcion isAdmin por getRol
-            {
-                return View(manejoDeTareas.GetByIdUsuario(Int32.Parse(HttpContext.Session.GetString("Id")!)));
-            }
-            else
-            {
-                return View();
-                // PONER EN EL ERROR 
-            }
-        }
+        List<Tarea> tareas = repositorioTarea.GetByIdTablero(idTablero);
+        var listarTarea = new ListarTareaViewModel();
+        return View(listarTarea.convertirLista(tareas));
     }
     // Controlador CREAR
     [HttpGet]
     public IActionResult CrearTarea()
     {
-        return View(new Tarea());
+        if (!isLogin())
+        {
+            return RedirectToAction("Error");
+        }
+        return View(new CrearTareaViewModel());
     }
     [HttpPost]
-    public IActionResult CrearTarea(Tarea t)
+    public IActionResult CrearTarea(CrearTareaViewModel t)
     {
-        manejoDeTareas.Create(idTableroPrueba, t);
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction("ListarTarea");
+        }
+        if (!isLogin())
+        {
+            return RedirectToAction("Error");
+        }
+        Tarea tarea = new Tarea(t);
+        repositorioTarea.Create(t.IdTablero, tarea);
         return RedirectToAction("ListarTarea");
     }
-    // Controlador MODIFICAR ----> pq utilzar post en lugar de put 
+    // Controlador MODIFICAR
     [HttpGet]
     public IActionResult ModificarTarea(int idTarea)
     {
-        return View(manejoDeTareas.GetById(idTarea));
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction("ListarTarea");
+        }
+        if (!isLogin())
+        {
+            return RedirectToAction("Error");
+        }
+        Tarea tareaModificar = repositorioTarea.GetById(idTarea);
+        return View(new ModificarTareaViewModel(tareaModificar));
     }
     [HttpPost]
-    public IActionResult ModificarTarea(Tarea t)
+    public IActionResult ModificarTarea(ModificarTareaViewModel t)
     {
-        manejoDeTareas.Update(t.Id, t);
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction("ListarTarea");
+        }
+        if (!isLogin())
+        {
+            return RedirectToAction("Error");
+        }
+        Tarea tareaModificada = repositorioTarea.GetById(t.Id);
+        tareaModificada.Nombre = t.Nombre;
+        tareaModificada.Estado = t.Estado;
+        tareaModificada.Descripcion = t.Descripcion;
+        tareaModificada.Color = t.Color;
+        tareaModificada.IdUsuarioAsignado = t.IdUsuarioAsignado;
+        repositorioTarea.Update(t.Id, tareaModificada);
         return RedirectToAction("ListarTarea");
     }
-    // Controlador ELIMINAR -------> [] de que tipo es el http o no hace falta indicarlo
-    // [HttpDelete]
+    // Controlador ELIMINAR
     public IActionResult EliminarTarea(int idTarea)
     {
-        manejoDeTareas.Remove(idTarea);
+        if (!isLogin())
+        {
+            return RedirectToAction("Error");
+        }
+        repositorioTarea.Remove(idTarea);
         return RedirectToAction("ListarTarea");
     }
 
-    private bool isAdmin()
+    private bool isLogin()
     {
-        if (HttpContext.Session != null && HttpContext.Session.GetString("Rol") == "admin")
+        if (HttpContext.Session != null && HttpContext.Session.GetString("NombreDeUsuario") != null)
+        {
             return true;
-
+        }
         return false;
+    }
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }

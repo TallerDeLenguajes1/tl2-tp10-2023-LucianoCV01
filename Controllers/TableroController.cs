@@ -1,80 +1,132 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using tl2_tp10_2023_LucianoCV01.Models;
-using EspacioRepositorios;
+using TP10.Models;
+using TP10.Repository;
+using TP10.ViewModels;
 
-namespace tl2_tp10_2023_LucianoCV01.Controllers;
+namespace TP10.Controllers;
 
 public class TableroController : Controller
 {
-    const int idUsuarioPrueba = 1;
-    private ITableroRepository manejoDeTableros;
     private readonly ILogger<TableroController> _logger;
+    private ITableroRepository repositorioTablero;
 
     public TableroController(ILogger<TableroController> logger)
     {
         _logger = logger;
-        manejoDeTableros = new TableroRepository();
+        repositorioTablero = new TableroRepository();
     }
-    // En el controlador de tableros: Listar, Crear, Modificar y Eliminar Tableros. (Por el
-    // momento asuma que el usuario propietario es siempre el mismo)
     // Controlador LISTAR
     [HttpGet]
     public IActionResult ListarTablero()
     {
+        if (!isLogin())
+        {
+            return RedirectToAction("Error");
+        }
         if (isAdmin())
         {
-            return View(manejoDeTableros.GetAll());
+            List<Tablero> tableros = repositorioTablero.GetAll();
+            var listarTablero = new ListarTableroViewModel();
+            return View(listarTablero.convertirLista(tableros));
         }
         else
         {
-            if (HttpContext.Session.GetString("Rol") == "operador") // Cambiar la funcion isAdmin por getRol
-            {
-                return View(manejoDeTableros.GetByIdUsuario(Int32.Parse(HttpContext.Session.GetString("Id")!)));
-            } 
-            else
-            {
-                return View(); 
-                // PONER EN EL ERROR 
-            } 
+            int usuarioId = HttpContext.Session.GetInt32("Id") ?? -9999;
+            List<Tablero> tableros = repositorioTablero.GetByIdUsuario(usuarioId);
+            var listarTablero = new ListarTableroViewModel();
+            return View(listarTablero.convertirLista(tableros));
         }
     }
     // Controlador CREAR
     [HttpGet]
     public IActionResult CrearTablero()
     {
-        return View(new Tablero());
+        if (!isLogin())
+        {
+            return RedirectToAction("Error");
+        }
+        return View(new CrearTableroViewModel());
     }
     [HttpPost]
-    public IActionResult CrearTablero(Tablero t)
+    public IActionResult CrearTablero(CrearTableroViewModel t)
     {
-        manejoDeTableros.Create(idUsuarioPrueba, t);
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction("ListarTablero");
+        }
+        if (!isLogin())
+        {
+            return RedirectToAction("Error");
+        }
+        Tablero tablero = new Tablero(t)
+        {
+            IdUsuarioPropietario = HttpContext.Session.GetInt32("Id") ?? -9999
+        };
+        repositorioTablero.Create(tablero);
         return RedirectToAction("ListarTablero");
     }
-    // Controlador MODIFICAR ----> pq utilzar post en lugar de put 
+    // Controlador MODIFICAR
     [HttpGet]
     public IActionResult ModificarTablero(int idTablero)
     {
-        return View(manejoDeTableros.GetById(idTablero));
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction("ListarTablero");
+        }
+        if (!isLogin())
+        {
+            return RedirectToAction("Error");
+        }
+        Tablero tableroModificar = repositorioTablero.GetById(idTablero);
+        return View(new ModificarTableroViewModel(tableroModificar));
     }
     [HttpPost]
-    public IActionResult ModificarTablero(Tablero t)
+    public IActionResult ModificarTablero(ModificarTableroViewModel t)
     {
-        manejoDeTableros.Update(t.Id, t);
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction("ListarTablero");
+        }
+        if (!isLogin())
+        {
+            return RedirectToAction("Error");
+        }
+        Tablero tableroModificado = repositorioTablero.GetById(t.Id);
+        tableroModificado.Nombre = t.Nombre;
+        tableroModificado.Descripcion = t.Descripcion;
+        repositorioTablero.Update(t.Id, tableroModificado);
         return RedirectToAction("ListarTablero");
     }
-    // Controlador ELIMINAR -------> [] de que tipo es el http o no hace falta indicarlo
-    // [HttpDelete]
+    // Controlador ELIMINAR 
     public IActionResult EliminarTablero(int idTablero)
     {
-        manejoDeTableros.Remove(idTablero);
+        if (!isLogin())
+        {
+            return RedirectToAction("Error");
+        }
+        repositorioTablero.Remove(idTablero);
         return RedirectToAction("ListarTablero");
+    }
+
+    private bool isLogin()
+    {
+        return HttpContext.Session != null && HttpContext.Session.GetString("NombreDeUsuario") != null;
     }
 
     private bool isAdmin()
     {
-        if (HttpContext.Session != null && HttpContext.Session.GetString("Rol") == "admin")
-            return true;
+        return isLogin() && HttpContext.Session.GetString("Rol") == "administrador";
+    }
 
-        return false;
+    // private bool isOperador()
+    // {
+    //     return isLogin() && HttpContext.Session.GetString("Rol") == "operador";
+    // } 
+
+    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+    public IActionResult Error()
+    {
+        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
