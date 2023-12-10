@@ -9,12 +9,12 @@ namespace tl2_tp10_2023_LucianoCV01.Controllers;
 public class TableroController : Controller
 {
     private readonly ILogger<TableroController> _logger;
-    private ITableroRepository repositorioTablero;
+    private ITableroRepository _repositorioTablero;
 
-    public TableroController(ILogger<TableroController> logger)
+    public TableroController(ILogger<TableroController> logger, ITableroRepository repositorioTablero)
     {
         _logger = logger;
-        repositorioTablero = new TableroRepository();
+        _repositorioTablero = repositorioTablero;
     }
     // Controlador LISTAR
     [HttpGet]
@@ -26,14 +26,14 @@ public class TableroController : Controller
         }
         if (isAdmin())
         {
-            List<Tablero> tableros = repositorioTablero.GetAll();
+            List<Tablero> tableros = _repositorioTablero.GetAll();
             var listarTablero = new ListarTableroViewModel();
             return View(listarTablero.convertirLista(tableros));
         }
         else
         {
             int usuarioId = HttpContext.Session.GetInt32("Id") ?? -9999;
-            List<Tablero> tableros = repositorioTablero.GetByIdUsuario(usuarioId);
+            List<Tablero> tableros = _repositorioTablero.GetByIdUsuario(usuarioId);
             var listarTablero = new ListarTableroViewModel();
             return View(listarTablero.convertirLista(tableros));
         }
@@ -63,7 +63,7 @@ public class TableroController : Controller
         {
             IdUsuarioPropietario = HttpContext.Session.GetInt32("Id") ?? -9999
         };
-        repositorioTablero.Create(tablero);
+        _repositorioTablero.Create(tablero);
         return RedirectToAction("ListarTablero");
     }
     // Controlador MODIFICAR
@@ -78,7 +78,7 @@ public class TableroController : Controller
         {
             return RedirectToAction("ListarTablero");
         }
-        Tablero tableroModificar = repositorioTablero.GetById(idTablero);
+        Tablero tableroModificar = _repositorioTablero.GetById(idTablero);
         return View(new ModificarTableroViewModel(tableroModificar));
     }
     [HttpPost]
@@ -92,10 +92,10 @@ public class TableroController : Controller
         {
             return RedirectToAction("ListarTablero");
         }
-        Tablero tableroModificado = repositorioTablero.GetById(t.Id);
+        Tablero tableroModificado = _repositorioTablero.GetById(t.Id);
         tableroModificado.Nombre = t.Nombre;
         tableroModificado.Descripcion = t.Descripcion;
-        repositorioTablero.Update(t.Id, tableroModificado);
+        _repositorioTablero.Update(t.Id, tableroModificado);
         return RedirectToAction("ListarTablero");
     }
     // Controlador ELIMINAR 
@@ -105,7 +105,7 @@ public class TableroController : Controller
         {
             return RedirectToAction("Error");
         }
-        repositorioTablero.Remove(idTablero);
+        _repositorioTablero.Remove(idTablero);
         return RedirectToAction("ListarTablero");
     }
 

@@ -1,3 +1,5 @@
+using tl2_tp10_2023_LucianoCV01.Repository;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -10,6 +12,10 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+builder.Services.AddScoped<ITableroRepository,TableroRepository>();
+builder.Services.AddScoped<ITareaRepository,TareaRepository>();
+builder.Services.AddScoped<IUsuarioRepository,UsuarioRepository>();
 
 var app = builder.Build();
 

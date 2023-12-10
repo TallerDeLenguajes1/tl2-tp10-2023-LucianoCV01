@@ -9,12 +9,12 @@ namespace tl2_tp10_2023_LucianoCV01.Controllers;
 public class UsuarioController : Controller
 {
     private readonly ILogger<UsuarioController> _logger;
-    private IUsuarioRepository repositorioUsuario;
+    private IUsuarioRepository _repositorioUsuario;
 
-    public UsuarioController(ILogger<UsuarioController> logger)
+    public UsuarioController(ILogger<UsuarioController> logger, IUsuarioRepository repositorioUsuario)
     {
         _logger = logger;
-        repositorioUsuario = new UsuarioRepository();
+        _repositorioUsuario = repositorioUsuario;
     }
     // Controlador LISTAR
     [HttpGet]
@@ -24,7 +24,7 @@ public class UsuarioController : Controller
         {
             return RedirectToAction("Error");
         }
-        List<Usuario> usuarios = repositorioUsuario.GetAll();
+        List<Usuario> usuarios = _repositorioUsuario.GetAll();
         var listarUsuario = new ListarUsuarioViewModel();
         return View(listarUsuario.convertirLista(usuarios));
     }
@@ -50,7 +50,7 @@ public class UsuarioController : Controller
             return RedirectToAction("ListarUsuario");
         }
         Usuario usuario = new Usuario(u);
-        repositorioUsuario.Create(usuario);
+        _repositorioUsuario.Create(usuario);
         return RedirectToAction("ListarUsuario");
     }
     // Controlador MODIFICAR
@@ -65,7 +65,7 @@ public class UsuarioController : Controller
         {
             return RedirectToAction("ListarUsuario");
         }
-        Usuario usuarioModificar = repositorioUsuario.GetById(idUsuario);
+        Usuario usuarioModificar = _repositorioUsuario.GetById(idUsuario);
         return View(new ModificarUsuarioViewModel(usuarioModificar));
     }
     [HttpPost]
@@ -79,11 +79,11 @@ public class UsuarioController : Controller
         {
             return RedirectToAction("ListarUsuario");
         }
-        Usuario usuarioModicado = repositorioUsuario.GetById(u.Id);
+        Usuario usuarioModicado = _repositorioUsuario.GetById(u.Id);
         usuarioModicado.NombreDeUsuario = u.NombreDeUsuario;
         usuarioModicado.Contrasenia = u.Contrasenia;
         usuarioModicado.Rol = u.Rol;
-        repositorioUsuario.Update(u.Id, usuarioModicado);
+        _repositorioUsuario.Update(u.Id, usuarioModicado);
         return RedirectToAction("ListarUsuario");
     }
     // Controlador ELIMINAR
@@ -93,7 +93,7 @@ public class UsuarioController : Controller
         {
             return RedirectToAction("Error");
         }
-        repositorioUsuario.Remove(idUsuario);
+        _repositorioUsuario.Remove(idUsuario);
         return RedirectToAction("ListarUsuario");
     }
 

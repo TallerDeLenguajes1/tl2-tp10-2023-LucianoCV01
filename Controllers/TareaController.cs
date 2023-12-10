@@ -9,12 +9,12 @@ namespace tl2_tp10_2023_LucianoCV01.Controllers;
 public class TareaController : Controller
 {
     private readonly ILogger<TareaController> _logger;
-    private ITareaRepository repositorioTarea;
+    private ITareaRepository _repositorioTarea;
 
-    public TareaController(ILogger<TareaController> logger)
+    public TareaController(ILogger<TareaController> logger, ITareaRepository repositorioTarea)
     {
         _logger = logger;
-        repositorioTarea = new TareaRepository();
+        _repositorioTarea = repositorioTarea;
     }
     // Controlador LISTAR 
     [HttpGet]
@@ -24,7 +24,7 @@ public class TareaController : Controller
         {
             return RedirectToAction("Error");
         }
-        List<Tarea> tareas = repositorioTarea.GetByIdTablero(idTablero);
+        List<Tarea> tareas = _repositorioTarea.GetByIdTablero(idTablero);
         var listarTarea = new ListarTareaViewModel();
         return View(listarTarea.convertirLista(tareas));
     }
@@ -50,7 +50,7 @@ public class TareaController : Controller
             return RedirectToAction("Error");
         }
         Tarea tarea = new Tarea(t);
-        repositorioTarea.Create(t.IdTablero, tarea);
+        _repositorioTarea.Create(t.IdTablero, tarea);
         return RedirectToAction("ListarTarea");
     }
     // Controlador MODIFICAR
@@ -65,7 +65,7 @@ public class TareaController : Controller
         {
             return RedirectToAction("ListarTarea");
         }
-        Tarea tareaModificar = repositorioTarea.GetById(idTarea);
+        Tarea tareaModificar = _repositorioTarea.GetById(idTarea);
         return View(new ModificarTareaViewModel(tareaModificar));
     }
     [HttpPost]
@@ -79,13 +79,13 @@ public class TareaController : Controller
         {
             return RedirectToAction("ListarTarea");
         }
-        Tarea tareaModificada = repositorioTarea.GetById(t.Id);
+        Tarea tareaModificada = _repositorioTarea.GetById(t.Id);
         tareaModificada.Nombre = t.Nombre;
         tareaModificada.Estado = t.Estado;
         tareaModificada.Descripcion = t.Descripcion;
         tareaModificada.Color = t.Color;
         tareaModificada.IdUsuarioAsignado = t.IdUsuarioAsignado;
-        repositorioTarea.Update(t.Id, tareaModificada);
+        _repositorioTarea.Update(t.Id, tareaModificada);
         return RedirectToAction("ListarTarea");
     }
     // Controlador ELIMINAR
@@ -95,7 +95,7 @@ public class TareaController : Controller
         {
             return RedirectToAction("Error");
         }
-        repositorioTarea.Remove(idTarea);
+        _repositorioTarea.Remove(idTarea);
         return RedirectToAction("ListarTarea");
     }
 
