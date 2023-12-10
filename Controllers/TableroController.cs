@@ -1,10 +1,10 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using TP10.Models;
-using TP10.Repository;
-using TP10.ViewModels;
+using tl2_tp10_2023_LucianoCV01.Models;
+using tl2_tp10_2023_LucianoCV01.Repository;
+using tl2_tp10_2023_LucianoCV01.ViewModels;
 
-namespace TP10.Controllers;
+namespace tl2_tp10_2023_LucianoCV01.Controllers;
 
 public class TableroController : Controller
 {
@@ -51,13 +51,13 @@ public class TableroController : Controller
     [HttpPost]
     public IActionResult CrearTablero(CrearTableroViewModel t)
     {
-        if (!ModelState.IsValid)
-        {
-            return RedirectToAction("ListarTablero");
-        }
         if (!isLogin())
         {
             return RedirectToAction("Error");
+        }
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction("ListarTablero");
         }
         Tablero tablero = new Tablero(t)
         {
@@ -70,13 +70,13 @@ public class TableroController : Controller
     [HttpGet]
     public IActionResult ModificarTablero(int idTablero)
     {
-        if (!ModelState.IsValid)
-        {
-            return RedirectToAction("ListarTablero");
-        }
         if (!isLogin())
         {
             return RedirectToAction("Error");
+        }
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction("ListarTablero");
         }
         Tablero tableroModificar = repositorioTablero.GetById(idTablero);
         return View(new ModificarTableroViewModel(tableroModificar));
@@ -84,13 +84,13 @@ public class TableroController : Controller
     [HttpPost]
     public IActionResult ModificarTablero(ModificarTableroViewModel t)
     {
-        if (!ModelState.IsValid)
-        {
-            return RedirectToAction("ListarTablero");
-        }
         if (!isLogin())
         {
             return RedirectToAction("Error");
+        }
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction("ListarTablero");
         }
         Tablero tableroModificado = repositorioTablero.GetById(t.Id);
         tableroModificado.Nombre = t.Nombre;

@@ -1,10 +1,10 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using TP10.Models;
-using TP10.Repository;
-using TP10.ViewModels;
+using tl2_tp10_2023_LucianoCV01.Models;
+using tl2_tp10_2023_LucianoCV01.Repository;
+using tl2_tp10_2023_LucianoCV01.ViewModels;
 
-namespace TP10.Controllers;
+namespace tl2_tp10_2023_LucianoCV01.Controllers;
 
 public class TareaController : Controller
 {
@@ -57,13 +57,13 @@ public class TareaController : Controller
     [HttpGet]
     public IActionResult ModificarTarea(int idTarea)
     {
-        if (!ModelState.IsValid)
-        {
-            return RedirectToAction("ListarTarea");
-        }
         if (!isLogin())
         {
             return RedirectToAction("Error");
+        }
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction("ListarTarea");
         }
         Tarea tareaModificar = repositorioTarea.GetById(idTarea);
         return View(new ModificarTareaViewModel(tareaModificar));
@@ -71,13 +71,13 @@ public class TareaController : Controller
     [HttpPost]
     public IActionResult ModificarTarea(ModificarTareaViewModel t)
     {
-        if (!ModelState.IsValid)
-        {
-            return RedirectToAction("ListarTarea");
-        }
         if (!isLogin())
         {
             return RedirectToAction("Error");
+        }
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction("ListarTarea");
         }
         Tarea tareaModificada = repositorioTarea.GetById(t.Id);
         tareaModificada.Nombre = t.Nombre;
