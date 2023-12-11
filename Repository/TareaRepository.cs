@@ -43,7 +43,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         public Tarea GetById(int id)
         {
             const string queryString = $"SELECT * FROM Tarea WHERE id = @id";
-            var tarea = new Tarea();
+            Tarea? tarea = null;
             using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
@@ -53,13 +53,15 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 {
                     while (reader.Read())
                     {
-
-                        tarea.Id = Convert.ToInt32(reader["id"]);
-                        tarea.IdTablero = Convert.ToInt32(reader["id_tablero"]);
-                        tarea.Nombre = reader["nombre"].ToString()!;
-                        tarea.Estado = (Estado)Convert.ToInt32(reader["estado"]);
-                        tarea.Descripcion = reader["descripcion"].ToString()!;
-                        tarea.Color = reader["color"].ToString()!;
+                        tarea = new Tarea
+                        {
+                            Id = Convert.ToInt32(reader["id"]),
+                            IdTablero = Convert.ToInt32(reader["id_tablero"]),
+                            Nombre = reader["nombre"].ToString()!,
+                            Estado = (Estado)Convert.ToInt32(reader["estado"]),
+                            Descripcion = reader["descripcion"].ToString()!,
+                            Color = reader["color"].ToString()!
+                        };
                         if (reader["id_usuario_asignado"] != DBNull.Value)
                         {
                             tarea.IdUsuarioAsignado = Convert.ToInt32(reader["id_usuario_asignado"]);
@@ -72,6 +74,10 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 }
                 connection.Close();
             };
+            if (tarea == null)
+            {
+                throw new Exception("Tarea que se busca no existe.");
+            }
             return tarea;
         }
         public List<Tarea> GetByIdUsuario(int idUsuario)
@@ -107,6 +113,10 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                     }
                 }
                 connection.Close();
+            }
+            if (tareas.Count == 0)
+            {
+                throw new Exception("Usuario para buscar tareas no existe.");
             }
             return tareas;
         }
@@ -144,6 +154,10 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 }
                 connection.Close();
             }
+            if (tareas.Count == 0)
+            {
+                throw new Exception("Tablero para buscar tareas no existe.");
+            }
             return tareas;
         }
         public void Create(int idTablero, Tarea tarea)
@@ -172,6 +186,10 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         }
         public void Update(int id, Tarea tarea)
         {
+            if (!ExisteTarea(id))
+            {
+                throw new Exception($"La tarea que se intenta actualizar no existe.");
+            }
             const string queryString = $"UPDATE Tarea SET nombre = (@name), estado = (@estado), descripcion = (@descripcion), color = (@color), id_usuario_asignado = (@usuario) WHERE id = (@id);";
             using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
             {
@@ -196,6 +214,10 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         }
         public void UpdateUsuario(int id, int idUsuario)
         {
+            if (!ExisteTarea(id))
+            {
+                throw new Exception($"La tarea a la que se le intenta actualizar el usuario no existe.");
+            }
             const string queryString = $"UPDATE Tarea SET id_usuario_asignado = (@usuario) WHERE id = (@id);";
             using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
             {
@@ -209,6 +231,10 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         }
         public void Remove(int id)
         {
+            if (!ExisteTarea(id))
+            {
+                throw new Exception($"La tarea que se intenta eliminar no existe.");
+            }
             const string queryString = $"DELETE FROM Tarea WHERE id = @id;";
             using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
             {
@@ -219,6 +245,18 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 connection.Close();
             }
 
+        }
+        private bool ExisteTarea(int id)
+        {
+            try
+            {
+                GetById(id);
+                return true; // Si no lanza excepción, el tablero existe
+            }
+            catch (Exception)
+            {
+                return false; // Si lanza excepción, el tablero no existe
+            }
         }
     }
 }

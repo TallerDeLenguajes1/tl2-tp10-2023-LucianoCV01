@@ -34,7 +34,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         public Tablero GetById(int id)
         {
             const string queryString = $"SELECT * FROM Tablero WHERE id = @id";
-            var tablero = new Tablero();
+            Tablero? tablero = null;
             using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
@@ -44,14 +44,21 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 {
                     while (reader.Read())
                     {
-                        tablero.Id = Convert.ToInt32(reader["id"]);
-                        tablero.IdUsuarioPropietario = Convert.ToInt32(reader["id_usuario_propietario"]);
-                        tablero.Nombre = reader["nombre"].ToString()!;
-                        tablero.Descripcion = reader["descripcion"].ToString()!;
+                        tablero = new Tablero
+                        {
+                            Id = Convert.ToInt32(reader["id"]),
+                            IdUsuarioPropietario = Convert.ToInt32(reader["id_usuario_propietario"]),
+                            Nombre = reader["nombre"].ToString()!,
+                            Descripcion = reader["descripcion"].ToString()!
+                        };
                     }
                 }
                 connection.Close();
             };
+            if (tablero == null)
+            {
+                throw new Exception("Tablero que se busca no existe.");
+            }
             return tablero;
         }
         public List<Tablero> GetByIdUsuario(int idUsuario)
@@ -79,6 +86,10 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 }
                 connection.Close();
             }
+            if (tableros.Count == 0)
+            {
+                throw new Exception("Usuario para buscar tableros no existe.");
+            }
             return tableros;
         }
         public void Create(Tablero tablero)
@@ -97,6 +108,10 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         }
         public void Update(int id, Tablero tablero)
         {
+            if (!ExisteTablero(id))
+            {
+                throw new Exception($"El tablero que se intenta actualizar no existe.");
+            }
             const string queryString = $"UPDATE Tablero SET nombre = (@name), descripcion = (@descripcion) WHERE id = (@id);";
             using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
             {
@@ -111,6 +126,10 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         }
         public void Remove(int id)
         {
+            if (!ExisteTablero(id))
+            {
+                throw new Exception($"El tablero que se intenta eliminar no existe.");
+            }
             const string queryString = $"DELETE FROM Tablero WHERE id = @id;";
             using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
             {
@@ -119,6 +138,18 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 connection.Open();
                 command.ExecuteNonQuery();
                 connection.Close();
+            }
+        }
+        private bool ExisteTablero(int id)
+        {
+            try
+            {
+                GetById(id);
+                return true; // Si no lanza excepción, el tablero existe
+            }
+            catch (Exception)
+            {
+                return false; // Si lanza excepción, el tablero no existe
             }
         }
     }

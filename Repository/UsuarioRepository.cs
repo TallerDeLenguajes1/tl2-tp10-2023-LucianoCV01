@@ -22,7 +22,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                             Id = Convert.ToInt32(reader["id"]),
                             NombreDeUsuario = reader["nombre_de_usuario"].ToString()!,
                             Contrasenia = reader["contrasenia"].ToString()!,
-                            Rol =  (Rol)Convert.ToInt32(reader["rol"])
+                            Rol = (Rol)Convert.ToInt32(reader["rol"])
                         };
                         usuarios.Add(usuario);
                     }
@@ -34,7 +34,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         public Usuario GetById(int id)
         {
             const string queryString = $"SELECT * FROM Usuario WHERE id = @id";
-            var usuario = new Usuario();
+            Usuario? usuario = null;
             using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
@@ -44,14 +44,21 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 {
                     while (reader.Read())
                     {
-                        usuario.Id = Convert.ToInt32(reader["id"]);
-                        usuario.NombreDeUsuario = reader["nombre_de_usuario"].ToString()!;
-                        usuario.Contrasenia = reader["contrasenia"].ToString()!;
-                        usuario.Rol = (Rol)Convert.ToInt32(reader["rol"]);
+                        usuario = new Usuario
+                        {
+                            Id = Convert.ToInt32(reader["id"]),
+                            NombreDeUsuario = reader["nombre_de_usuario"].ToString()!,
+                            Contrasenia = reader["contrasenia"].ToString()!,
+                            Rol = (Rol)Convert.ToInt32(reader["rol"])
+                        };
                     }
                 }
                 connection.Close();
             };
+            if (usuario == null)
+            {
+                throw new Exception("Usuario que se busca no existe.");
+            }
             return usuario;
         }
         public void Create(Usuario usuario)
@@ -70,6 +77,10 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         }
         public void Update(int id, Usuario usuario)
         {
+            if (!ExisteUsuario(id))
+            {
+                throw new Exception($"El usuario que se intenta modificar no existe.");
+            }
             const string queryString = $"UPDATE Usuario SET nombre_de_usuario = (@name), contrasenia = (@pass), rol = (@rol) WHERE id = (@id);";
             using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
             {
@@ -85,6 +96,10 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         }
         public void Remove(int id)
         {
+            if (!ExisteUsuario(id))
+            {
+                throw new Exception($"El usuario que se intenta eliminar no existe.");
+            }
             const string queryString = $"DELETE FROM Usuario WHERE id = @id;";
             using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
             {
@@ -93,6 +108,18 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 connection.Open();
                 command.ExecuteNonQuery();
                 connection.Close();
+            }
+        }
+        private bool ExisteUsuario(int id)
+        {
+            try
+            {
+                GetById(id);
+                return true; // Si no lanza excepción, el tablero existe
+            }
+            catch (Exception)
+            {
+                return false; // Si lanza excepción, el tablero no existe
             }
         }
     }
