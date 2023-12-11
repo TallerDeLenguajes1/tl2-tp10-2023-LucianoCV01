@@ -4,13 +4,17 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
 {
     class TareaRepository : ITareaRepository
     {
-        private const string cadenaConexion = "Data Source=DB/Kanban.db;Cache=Shared";
+        private string _cadenaConexion;
+        public TareaRepository(string CadenaDeConexion)
+        {
+            _cadenaConexion = CadenaDeConexion;
+        }
         public List<Tarea> GetAll()
         {
             const string queryString = @"SELECT * FROM Tarea;";
             List<Tarea> tareas = new List<Tarea>();
             int usuarioAsignado;
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 connection.Open();
@@ -44,7 +48,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         {
             const string queryString = $"SELECT * FROM Tarea WHERE id = @id";
             Tarea? tarea = null;
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@id", id));
@@ -85,7 +89,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
             const string queryString = @"SELECT * FROM Tarea WHERE id_usuario_asignado = @asignado";
             List<Tarea> tareas = new List<Tarea>();
             int usuarioAsignado;
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@asignado", idUsuario));
@@ -125,7 +129,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
             const string queryString = @"SELECT * FROM Tarea WHERE id_tablero = @tablero";
             List<Tarea> tareas = new List<Tarea>();
             int usuarioAsignado;
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@tablero", idTablero));
@@ -163,7 +167,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         public void Create(int idTablero, Tarea tarea)
         {
             const string queryString = $"INSERT INTO Tarea (id_tablero, nombre, estado, descripcion, color, id_usuario_asignado) VALUES (@tablero, @name, @estado, @descripcion, @color, @usuario)";
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@tablero", idTablero));
@@ -191,7 +195,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 throw new Exception($"La tarea que se intenta actualizar no existe.");
             }
             const string queryString = $"UPDATE Tarea SET nombre = (@name), estado = (@estado), descripcion = (@descripcion), color = (@color), id_usuario_asignado = (@usuario) WHERE id = (@id);";
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@name", tarea.Nombre));
@@ -219,7 +223,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 throw new Exception($"La tarea a la que se le intenta actualizar el usuario no existe.");
             }
             const string queryString = $"UPDATE Tarea SET id_usuario_asignado = (@usuario) WHERE id = (@id);";
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@usuario", idUsuario));
@@ -236,7 +240,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 throw new Exception($"La tarea que se intenta eliminar no existe.");
             }
             const string queryString = $"DELETE FROM Tarea WHERE id = @id;";
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@id", id));

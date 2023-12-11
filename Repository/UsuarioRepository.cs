@@ -4,12 +4,17 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
 {
     public class UsuarioRepository : IUsuarioRepository
     {
-        private const string cadenaConexion = "Data Source=DB/Kanban.db;Cache=Shared";
+        private string _cadenaConexion;
+        public UsuarioRepository(string CadenaDeConexion)
+        {
+            _cadenaConexion = CadenaDeConexion;
+        }
+
         public List<Usuario> GetAll()
         {
             const string queryString = @"SELECT * FROM Usuario;";
             List<Usuario> usuarios = new List<Usuario>();
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 connection.Open();
@@ -35,7 +40,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         {
             const string queryString = $"SELECT * FROM Usuario WHERE id = @id";
             Usuario? usuario = null;
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@id", id));
@@ -64,7 +69,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         public void Create(Usuario usuario)
         {
             const string queryString = $"INSERT INTO Usuario (nombre_de_usuario, contrasenia, rol) VALUES (@name, @pass, @rol)";
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@name", usuario.NombreDeUsuario));
@@ -82,7 +87,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 throw new Exception($"El usuario que se intenta modificar no existe.");
             }
             const string queryString = $"UPDATE Usuario SET nombre_de_usuario = (@name), contrasenia = (@pass), rol = (@rol) WHERE id = (@id);";
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@name", usuario.NombreDeUsuario));
@@ -101,7 +106,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 throw new Exception($"El usuario que se intenta eliminar no existe.");
             }
             const string queryString = $"DELETE FROM Usuario WHERE id = @id;";
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@id", id));

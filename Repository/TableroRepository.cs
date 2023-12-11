@@ -4,12 +4,16 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
 {
     public class TableroRepository : ITableroRepository
     {
-        private const string cadenaConexion = "Data Source=DB/Kanban.db;Cache=Shared";
+        private string _cadenaConexion;
+        public TableroRepository(string CadenaDeConexion)
+        {
+            _cadenaConexion = CadenaDeConexion;
+        }
         public List<Tablero> GetAll()
         {
             const string queryString = @"SELECT * FROM Tablero;";
             List<Tablero> tableros = new List<Tablero>();
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 connection.Open();
@@ -35,7 +39,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         {
             const string queryString = $"SELECT * FROM Tablero WHERE id = @id";
             Tablero? tablero = null;
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@id", id));
@@ -65,7 +69,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         {
             const string queryString = @"SELECT * FROM Tablero WHERE id_usuario_propietario = @propietario";
             List<Tablero> tableros = new List<Tablero>();
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@propietario", idUsuario));
@@ -95,7 +99,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         public void Create(Tablero tablero)
         {
             const string queryString = $"INSERT INTO Tablero (id_usuario_propietario, nombre, descripcion) VALUES (@usuario, @name, @descripcion)";
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@usuario", tablero.IdUsuarioPropietario));
@@ -113,7 +117,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 throw new Exception($"El tablero que se intenta actualizar no existe.");
             }
             const string queryString = $"UPDATE Tablero SET nombre = (@name), descripcion = (@descripcion) WHERE id = (@id);";
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@name", tablero.Nombre));
@@ -131,7 +135,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 throw new Exception($"El tablero que se intenta eliminar no existe.");
             }
             const string queryString = $"DELETE FROM Tablero WHERE id = @id;";
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@id", id));
