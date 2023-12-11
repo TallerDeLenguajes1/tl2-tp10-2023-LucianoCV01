@@ -22,7 +22,7 @@ public class TableroController : Controller
     {
         if (!isLogin())
         {
-            return RedirectToAction("Error");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
         }
         if (isAdmin())
         {
@@ -44,7 +44,7 @@ public class TableroController : Controller
     {
         if (!isLogin())
         {
-            return RedirectToAction("Error");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
         }
         return View(new CrearTableroViewModel());
     }
@@ -53,7 +53,7 @@ public class TableroController : Controller
     {
         if (!isLogin())
         {
-            return RedirectToAction("Error");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
         }
         if (!ModelState.IsValid)
         {
@@ -72,7 +72,7 @@ public class TableroController : Controller
     {
         if (!isLogin())
         {
-            return RedirectToAction("Error");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
         }
         if (!ModelState.IsValid)
         {
@@ -86,7 +86,7 @@ public class TableroController : Controller
     {
         if (!isLogin())
         {
-            return RedirectToAction("Error");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
         }
         if (!ModelState.IsValid)
         {
@@ -103,7 +103,7 @@ public class TableroController : Controller
     {
         if (!isLogin())
         {
-            return RedirectToAction("Error");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
         }
         _repositorioTablero.Remove(idTablero);
         return RedirectToAction("ListarTablero");
@@ -123,10 +123,4 @@ public class TableroController : Controller
     // {
     //     return isLogin() && HttpContext.Session.GetString("Rol") == "operador";
     // } 
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-    }
 }

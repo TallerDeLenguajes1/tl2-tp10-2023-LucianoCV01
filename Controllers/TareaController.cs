@@ -22,7 +22,7 @@ public class TareaController : Controller
     {
         if (!isLogin())
         {
-            return RedirectToAction("Error");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
         }
         List<Tarea> tareas = _repositorioTarea.GetByIdTablero(idTablero);
         var listarTarea = new ListarTareaViewModel();
@@ -34,7 +34,7 @@ public class TareaController : Controller
     {
         if (!isLogin())
         {
-            return RedirectToAction("Error");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
         }
         return View(new CrearTareaViewModel());
     }
@@ -47,7 +47,7 @@ public class TareaController : Controller
         }
         if (!isLogin())
         {
-            return RedirectToAction("Error");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
         }
         Tarea tarea = new Tarea(t);
         _repositorioTarea.Create(t.IdTablero, tarea);
@@ -59,7 +59,7 @@ public class TareaController : Controller
     {
         if (!isLogin())
         {
-            return RedirectToAction("Error");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
         }
         if (!ModelState.IsValid)
         {
@@ -73,7 +73,7 @@ public class TareaController : Controller
     {
         if (!isLogin())
         {
-            return RedirectToAction("Error");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
         }
         if (!ModelState.IsValid)
         {
@@ -93,7 +93,7 @@ public class TareaController : Controller
     {
         if (!isLogin())
         {
-            return RedirectToAction("Error");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
         }
         _repositorioTarea.Remove(idTarea);
         return RedirectToAction("ListarTarea");
@@ -106,11 +106,5 @@ public class TareaController : Controller
             return true;
         }
         return false;
-    }
-
-    [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
-    {
-        return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
 }
