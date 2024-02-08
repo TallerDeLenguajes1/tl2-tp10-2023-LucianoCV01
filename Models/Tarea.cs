@@ -1,6 +1,6 @@
 namespace tl2_tp10_2023_LucianoCV01.Models
 {
-    class Tarea
+    public class Tarea
     {
         public int Id { get; set; }
         public int IdTablero { get; set; }

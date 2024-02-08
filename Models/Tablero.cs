@@ -1,6 +1,6 @@
 namespace tl2_tp10_2023_LucianoCV01.Models
 {
-    class Tablero
+    public class Tablero
     {
         public int Id { get; set; }
         public int IdUsuarioPropietario { get; set; }
