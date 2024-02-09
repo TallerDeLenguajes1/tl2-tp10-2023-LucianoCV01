@@ -66,7 +66,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 connection.Close();
             }
         }
-        public void Update(Usuario usuario)
+        public void Update(int id, Usuario usuario)
         {
             // lanzar excepcion por si no existe el usuario a modificar
             const string queryString = $"UPDATE Usuario SET nombreDeUsuario = (@name) WHERE id = (@id);";
@@ -74,7 +74,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@name", usuario.NombreDeUsuario));
-                command.Parameters.Add(new SqliteParameter("@id", usuario.Id));
+                command.Parameters.Add(new SqliteParameter("@id", id));
                 connection.Open();
                 command.ExecuteNonQuery();
                 connection.Close();

@@ -6,7 +6,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         public List<Usuario> GetAll ();
         public Usuario GetById (int id);
         public void Create (Usuario usuario);
-        public void Update (Usuario usuario);
+        public void Update (int id, Usuario usuario);
         public void Delete (int id);
     }
 }
