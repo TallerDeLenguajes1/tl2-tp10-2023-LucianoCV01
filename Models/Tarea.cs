@@ -6,9 +6,9 @@ namespace tl2_tp10_2023_LucianoCV01.Models
         public int IdTablero { get; set; }
         public string Nombre { get; set; }
         public EstadoTarea Estado { get; set; }
-        public string Descripcion { get; set; }
+        public string? Descripcion { get; set; }
         public ColorEtiqueta Color { get; set; }
-        public int IdUsuarioAsignado { get; set; }
+        public int? IdUsuarioAsignado { get; set; }
     }
     public enum EstadoTarea
     {
@@ -20,6 +20,7 @@ namespace tl2_tp10_2023_LucianoCV01.Models
     }
     public enum ColorEtiqueta
     {
+        Ninguno,
         Rojo, 
         Naranja, 
         Amarillo, 

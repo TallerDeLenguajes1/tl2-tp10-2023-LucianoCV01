@@ -12,22 +12,6 @@ public class HomeController : Controller
     public HomeController(ILogger<HomeController> logger)
     {
         _logger = logger;
-        // ITableroRepository repo = new TableroRepository();
-        // repo.Delete(1);
-        // var tab = new Tablero();
-        // tab.Nombre = "Prueba";
-        // tab.IdUsuarioPropietario = 3;
-        // repo.Create(tab);
-        // var tableros = repo.GetById(2);
-        // var usuprop = repo.GetByIdUsuario(3);
-        // // tableros.Descripcion = "Hola Mundo";
-        // // repo.Update(tableros.Id, tableros);
-        // tableros.Nombre = "Pepito";
-        // repo.Update(tableros.Id, tableros);
-        // var tableros2 = repo.GetAll();
-        // repo.Delete(tableros.Id);
-        // tableros2 = repo.GetAll();
-
     }
 
     public IActionResult Index()
