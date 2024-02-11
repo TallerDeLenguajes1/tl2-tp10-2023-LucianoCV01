@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using tl2_tp10_2023_LucianoCV01.Models;
 using tl2_tp10_2023_LucianoCV01.Repository;
+using tl2_tp10_2023_LucianoCV01.ViewModels;
 
 namespace tl2_tp10_2023_LucianoCV01.Controllers;
 
@@ -20,18 +21,22 @@ public class TableroController : Controller
     public IActionResult ListarTablero()
     {
         List<Tablero> tableros = repositorioTablero.GetAll();
-        return View(tableros);
+        ListarTableroViewModel listarTableroViewModel = new(tableros);
+        return View(listarTableroViewModel);
     }
     // Controlador CREAR
     [HttpGet]
     public IActionResult CrearTablero()
     {
-        return View(new Tablero());
+        CrearTableroViewModel crearTableroViewModel = new();
+        return View(crearTableroViewModel);
     }
     [HttpPost]
-    public IActionResult CrearTablero(Tablero t)
+    public IActionResult CrearTablero(CrearTableroViewModel t)
     {
-        repositorioTablero.Create(t);
+        Tablero tablero = new(t);
+        repositorioTablero.Create(tablero);
+        // falta campo idUsuarioPropietario
         return RedirectToAction("ListarTablero");
     }
     // Controlador MODIFICAR
@@ -39,12 +44,14 @@ public class TableroController : Controller
     public IActionResult ModificarTablero(int idTablero)
     {
         Tablero tableroModificar = repositorioTablero.GetById(idTablero);
-        return View(tableroModificar);
+        ModificarTableroViewModel modificarTableroViewModel = new(tableroModificar);
+        return View(modificarTableroViewModel);
     }
     [HttpPost]
-    public IActionResult ModificarTablero(Tablero t)
+    public IActionResult ModificarTablero(ModificarTableroViewModel t)
     {
-        repositorioTablero.Update(t.Id, t);
+        Tablero tablero = new(t);
+        repositorioTablero.Update(tablero.Id, tablero);
         return RedirectToAction("ListarTablero");
     }
     // Controlador ELIMINAR 

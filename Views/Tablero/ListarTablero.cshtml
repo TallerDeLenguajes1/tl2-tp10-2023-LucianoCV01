@@ -1,4 +1,4 @@
-@model List<Tablero>
+@model tl2_tp10_2023_LucianoCV01.ViewModels.ListarTableroViewModel
 
 <section>
     <article>
@@ -8,7 +8,6 @@
             <thead>
                 <tr>
                     <th hidden>ID Tablero</th>
-                    <th hidden>ID Usuario</th>
                     <th>Nombre</th>
                     <th>Descripción</th>
                     <th></th>
@@ -16,11 +15,10 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var tablero in Model)
+                @foreach (var tablero in Model.Tableros)
                 {
                     <tr>
                         <td hidden>@tablero.Id</td>
-                        <td hidden>@tablero.IdUsuarioPropietario</td>
                         <td>@tablero.Nombre</td>
                         <td>@tablero.Descripcion</td>
                         <td>

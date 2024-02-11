@@ -1,8 +1,7 @@
-@model Tablero
+@model tl2_tp10_2023_LucianoCV01.ViewModels.ModificarTableroViewModel
 
 <form asp-controller="Tablero" asp-action="ModificarTablero">
     <input hidden asp-for="@Model.Id">
-    <input hidden asp-for="@Model.IdUsuarioPropietario">
     <div class="form-group">
         <label asp-for="@Model.Nombre"></label>
         <input asp-for="@Model.Nombre" class="form-control"/>
@@ -12,5 +11,5 @@
         <input asp-for="@Model.Descripcion" class="form-control"/>
     </div>
 
-    <button type="submit">Enviar</button>
+    <button type="submit" class="btn btn-primary">Enviar</button>
 </form>
