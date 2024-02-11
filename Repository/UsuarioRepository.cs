@@ -22,6 +22,8 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                         {
                             Id = Convert.ToInt32(reader["id"]),
                             NombreDeUsuario = reader["nombreDeUsuario"].ToString()!,
+                            Contrasenia = reader["contrasenia"].ToString()!,
+                            Rol = (Rol)Enum.Parse(typeof(Rol), reader["rol"].ToString()!)
                         };
                         usuarios.Add(usuario);
                     }
@@ -47,6 +49,8 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                         {
                             Id = Convert.ToInt32(reader["id"]),
                             NombreDeUsuario = reader["nombreDeUsuario"].ToString()!,
+                            Contrasenia = reader["contrasenia"].ToString()!,
+                            Rol = (Rol)Enum.Parse(typeof(Rol), reader["rol"].ToString()!)
                         };
                     }
                 }
@@ -56,11 +60,13 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         }
         public void Create(Usuario usuario)
         {
-            const string queryString = $"INSERT INTO Usuario (nombreDeUsuario) VALUES (@name)";
+            const string queryString = $"INSERT INTO Usuario (nombreDeUsuario, contrasenia, rol) VALUES (@name, @pass, @rol)";
             using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@name", usuario.NombreDeUsuario));
+                command.Parameters.Add(new SqliteParameter("@pass", usuario.Contrasenia));
+                command.Parameters.Add(new SqliteParameter("@rol", usuario.Rol));
                 connection.Open();
                 command.ExecuteNonQuery();
                 connection.Close();
@@ -69,11 +75,13 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         public void Update(int id, Usuario usuario)
         {
             // lanzar excepcion por si no existe el usuario a modificar
-            const string queryString = $"UPDATE Usuario SET nombreDeUsuario = (@name) WHERE id = (@id);";
+            const string queryString = $"UPDATE Usuario SET nombreDeUsuario = (@name), contrasenia = (@pass), rol = (@rol) WHERE id = (@id);";
             using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@name", usuario.NombreDeUsuario));
+                command.Parameters.Add(new SqliteParameter("@pass", usuario.Contrasenia));
+                command.Parameters.Add(new SqliteParameter("@rol", usuario.Rol));
                 command.Parameters.Add(new SqliteParameter("@id", id));
                 connection.Open();
                 command.ExecuteNonQuery();
