@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using tl2_tp10_2023_LucianoCV01.Models;
 using tl2_tp10_2023_LucianoCV01.Repository;
+using tl2_tp10_2023_LucianoCV01.ViewModels;
 
 namespace tl2_tp10_2023_LucianoCV01.Controllers;
 
@@ -20,18 +21,21 @@ public class UsuarioController : Controller
     public IActionResult ListarUsuario()
     {
         List<Usuario> usuarios = repositorioUsuario.GetAll();
-        return View(usuarios);
+        ListarUsuarioViewModel listarUsuarioViewModel = new(usuarios);
+        return View(listarUsuarioViewModel);
     }
     // Controlador CREAR
     [HttpGet]
     public IActionResult CrearUsuario()
     {
-        return View(new Usuario());
+        CrearUsuarioViewModel crearUsuarioViewModel = new();
+        return View(crearUsuarioViewModel);
     }
     [HttpPost]
-    public IActionResult CrearUsuario(Usuario u)
+    public IActionResult CrearUsuario(CrearUsuarioViewModel u)
     {
-        repositorioUsuario.Create(u);
+        Usuario usuario = new(u);
+        repositorioUsuario.Create(usuario);
         return RedirectToAction("ListarUsuario");
     }
     // Controlador MODIFICAR
@@ -39,12 +43,14 @@ public class UsuarioController : Controller
     public IActionResult ModificarUsuario(int idUsuario)
     {
         Usuario usuarioModificar = repositorioUsuario.GetById(idUsuario);
-        return View(usuarioModificar);
+        ModificarUsuarioViewModel modificarUsuarioViewModelnew = new(usuarioModificar);
+        return View(modificarUsuarioViewModelnew);
     }
     [HttpPost]
-    public IActionResult ModificarUsuario(Usuario u)
+    public IActionResult ModificarUsuario(ModificarUsuarioViewModel u)
     {
-        repositorioUsuario.Update(u.Id, u);
+        Usuario usuario = new(u);
+        repositorioUsuario.Update(usuario.Id, usuario);
         return RedirectToAction("ListarUsuario");
     }
     // Controlador ELIMINAR

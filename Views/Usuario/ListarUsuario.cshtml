@@ -1,4 +1,4 @@
-@model List<Usuario>
+@model tl2_tp10_2023_LucianoCV01.ViewModels.ListarUsuarioViewModel
 
 <section>
     <article>
@@ -15,7 +15,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var usuario in Model)
+                @foreach (var usuario in Model.Usuarios)
                 {
                     <tr>
                         <td hidden>@usuario.Id</td>
