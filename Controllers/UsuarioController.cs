@@ -9,18 +9,18 @@ namespace tl2_tp10_2023_LucianoCV01.Controllers;
 public class UsuarioController : Controller
 {
     private readonly ILogger<UsuarioController> _logger;
-    private IUsuarioRepository repositorioUsuario;
+    private IUsuarioRepository _repositorioUsuario;
 
-    public UsuarioController(ILogger<UsuarioController> logger)
+    public UsuarioController(ILogger<UsuarioController> logger, IUsuarioRepository repositorioUsuario)
     {
         _logger = logger;
-        repositorioUsuario = new UsuarioRepository();
+        _repositorioUsuario = repositorioUsuario;
     }
     // Controlador LISTAR
     [HttpGet]
     public IActionResult ListarUsuario()
     {
-        List<Usuario> usuarios = repositorioUsuario.GetAll();
+        List<Usuario> usuarios = _repositorioUsuario.GetAll();
         ListarUsuarioViewModel listarUsuarioViewModel = new(usuarios);
         return View(listarUsuarioViewModel);
     }
@@ -39,14 +39,14 @@ public class UsuarioController : Controller
             return RedirectToAction("ListarUsuario");
         }
         Usuario usuario = new(u);
-        repositorioUsuario.Create(usuario);
+        _repositorioUsuario.Create(usuario);
         return RedirectToAction("ListarUsuario");
     }
     // Controlador MODIFICAR
     [HttpGet]
     public IActionResult ModificarUsuario(int idUsuario)
     {
-        Usuario usuarioModificar = repositorioUsuario.GetById(idUsuario);
+        Usuario usuarioModificar = _repositorioUsuario.GetById(idUsuario);
         ModificarUsuarioViewModel modificarUsuarioViewModelnew = new(usuarioModificar);
         return View(modificarUsuarioViewModelnew);
     }
@@ -58,13 +58,13 @@ public class UsuarioController : Controller
             return RedirectToAction("ListarUsuario");
         }
         Usuario usuario = new(u);
-        repositorioUsuario.Update(usuario.Id, usuario);
+        _repositorioUsuario.Update(usuario.Id, usuario);
         return RedirectToAction("ListarUsuario");
     }
     // Controlador ELIMINAR
     public IActionResult EliminarUsuario(int idUsuario)
     {
-        repositorioUsuario.Delete(idUsuario);
+        _repositorioUsuario.Delete(idUsuario);
         return RedirectToAction("ListarUsuario");
     }
 }

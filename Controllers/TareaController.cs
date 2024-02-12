@@ -9,18 +9,18 @@ namespace tl2_tp10_2023_LucianoCV01.Controllers;
 public class TareaController : Controller
 {
     private readonly ILogger<TareaController> _logger;
-    private ITareaRepository repositorioTarea;
+    private ITareaRepository _repositorioTarea;
 
-    public TareaController(ILogger<TareaController> logger)
+    public TareaController(ILogger<TareaController> logger, ITareaRepository repositorioTarea)
     {
         _logger = logger;
-        repositorioTarea = new TareaRepository();
+        _repositorioTarea = repositorioTarea;
     }
     // Controlador LISTAR 
     [HttpGet]
     public IActionResult ListarTarea(int idTablero)
     {
-        List<Tarea> tareas = repositorioTarea.GetByIdTablero(idTablero);
+        List<Tarea> tareas = _repositorioTarea.GetByIdTablero(idTablero);
         ListarTareaViewModel listarTareaViewModel = new(tareas);
         return View(listarTareaViewModel);
     }
@@ -39,14 +39,14 @@ public class TareaController : Controller
             return RedirectToAction("ListarTarea");
         }
         Tarea tarea = new(t);
-        repositorioTarea.Create(tarea.IdTablero, tarea);
+        _repositorioTarea.Create(tarea.IdTablero, tarea);
         return RedirectToAction("ListarTarea");
     }
     // Controlador MODIFICAR
     [HttpGet]
     public IActionResult ModificarTarea(int idTarea)
     {
-        Tarea tareaModificar = repositorioTarea.GetById(idTarea);
+        Tarea tareaModificar = _repositorioTarea.GetById(idTarea);
         ModificarTareaViewModel modificarTareaViewModel = new(tareaModificar);
         return View(modificarTareaViewModel);
     }
@@ -58,13 +58,13 @@ public class TareaController : Controller
             return RedirectToAction("ListarTarea");
         }
         Tarea tarea = new(t);
-        repositorioTarea.Update(tarea.Id, tarea);
+        _repositorioTarea.Update(tarea.Id, tarea);
         return RedirectToAction("ListarTarea");
     }
     // Controlador ELIMINAR
     public IActionResult EliminarTarea(int idTarea)
     {
-        repositorioTarea.Delete(idTarea);
+        _repositorioTarea.Delete(idTarea);
         return RedirectToAction("ListarTarea");
     }
 }

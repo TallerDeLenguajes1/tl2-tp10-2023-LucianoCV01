@@ -5,12 +5,16 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
 {
     public class TableroRepository : ITableroRepository
     {
-        private string cadenaConexion = "Data Source=DB/Taskmaster.db;Cache=Shared";
+        private string _cadenaConexion;
+        public TableroRepository(string CadenaDeConexion)
+        {
+            _cadenaConexion = CadenaDeConexion;
+        }
         public List<Tablero> GetAll()
         {
             const string queryString = @"SELECT * FROM Tablero;";
             List<Tablero> tableros = new List<Tablero>();
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 connection.Open();
@@ -36,7 +40,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         {
             const string queryString = $"SELECT * FROM Tablero WHERE id = @id";
             Tablero? tablero = null;
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@id", id));
@@ -64,7 +68,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
             // si existe puede que tenga tableros relacionados como no.
             const string queryString = @"SELECT * FROM Tablero WHERE idUsuarioPropietario = @propietario";
             List<Tablero> tableros = new List<Tablero>();
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@propietario", idUsuario));
@@ -85,17 +89,17 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 }
                 connection.Close();
             }
-            return tableros; 
+            return tableros;
         }
         public void Create(Tablero tablero)
         {
             const string queryString = $"INSERT INTO Tablero (idUsuarioPropietario, nombre, descripcion) VALUES (@usuario, @name, @descripcion)";
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@usuario", tablero.IdUsuarioPropietario));
                 command.Parameters.Add(new SqliteParameter("@name", tablero.Nombre));
-                command.Parameters.Add(new SqliteParameter("@descripcion",  tablero.Descripcion != null ? tablero.Descripcion : ""));
+                command.Parameters.Add(new SqliteParameter("@descripcion", tablero.Descripcion != null ? tablero.Descripcion : ""));
                 connection.Open();
                 command.ExecuteNonQuery();
                 connection.Close();
@@ -105,7 +109,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         {
             // lanzar excepcion si el tablero que quiero actualizar no existe.
             const string queryString = $"UPDATE Tablero SET nombre = (@name), descripcion = (@descripcion) WHERE id = (@id);";
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@name", tablero.Nombre));
@@ -120,7 +124,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         {
             // lanzar excepcion si el tablero a eliminar no existe.
             const string queryString = $"DELETE FROM Tablero WHERE id = @id;";
-            using (SqliteConnection connection = new SqliteConnection(cadenaConexion))
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
                 command.Parameters.Add(new SqliteParameter("@id", id));

@@ -9,12 +9,12 @@ namespace tl2_tp10_2023_LucianoCV01.Controllers;
 public class LoginController : Controller
 {
     private readonly ILogger<LoginController> _logger;
-    private IUsuarioRepository repositorioUsuario;
+    private IUsuarioRepository _repositorioUsuario;
 
-    public LoginController(ILogger<LoginController> logger)
+    public LoginController(ILogger<LoginController> logger, IUsuarioRepository repositorioUsuario)
     {
         _logger = logger;
-        repositorioUsuario = new UsuarioRepository();
+        _repositorioUsuario = repositorioUsuario;
     }
     public IActionResult Index()
     {
@@ -27,7 +27,7 @@ public class LoginController : Controller
             return RedirectToAction("Index");
         }
         //existe el usuario?
-        List<Usuario> usuarios = repositorioUsuario.GetAll();
+        List<Usuario> usuarios = _repositorioUsuario.GetAll();
         var usuarioLogin = usuarios.FirstOrDefault(u => u.NombreDeUsuario == usuario.NombreDeUsuario && u.Contrasenia == usuario.Contrasenia);
         // si el usuario no existe devuelvo al index
         if (usuarioLogin == null) return RedirectToAction("Index");

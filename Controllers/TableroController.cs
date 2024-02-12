@@ -9,18 +9,18 @@ namespace tl2_tp10_2023_LucianoCV01.Controllers;
 public class TableroController : Controller
 {
     private readonly ILogger<TableroController> _logger;
-    private ITableroRepository repositorioTablero;
+    private ITableroRepository _repositorioTablero;
 
-    public TableroController(ILogger<TableroController> logger)
+    public TableroController(ILogger<TableroController> logger, ITableroRepository repositorioTablero)
     {
         _logger = logger;
-        repositorioTablero = new TableroRepository();
+        _repositorioTablero = repositorioTablero;
     }
     // Controlador LISTAR
     [HttpGet]
     public IActionResult ListarTablero()
     {
-        List<Tablero> tableros = repositorioTablero.GetAll();
+        List<Tablero> tableros = _repositorioTablero.GetAll();
         ListarTableroViewModel listarTableroViewModel = new(tableros);
         return View(listarTableroViewModel);
     }
@@ -39,7 +39,7 @@ public class TableroController : Controller
             return RedirectToAction("ListarTablero");
         }
         Tablero tablero = new(t);
-        repositorioTablero.Create(tablero);
+        _repositorioTablero.Create(tablero);
         // falta campo idUsuarioPropietario
         return RedirectToAction("ListarTablero");
     }
@@ -47,7 +47,7 @@ public class TableroController : Controller
     [HttpGet]
     public IActionResult ModificarTablero(int idTablero)
     {
-        Tablero tableroModificar = repositorioTablero.GetById(idTablero);
+        Tablero tableroModificar = _repositorioTablero.GetById(idTablero);
         ModificarTableroViewModel modificarTableroViewModel = new(tableroModificar);
         return View(modificarTableroViewModel);
     }
@@ -59,13 +59,13 @@ public class TableroController : Controller
             return RedirectToAction("ListarTablero");
         }
         Tablero tablero = new(t);
-        repositorioTablero.Update(tablero.Id, tablero);
+        _repositorioTablero.Update(tablero.Id, tablero);
         return RedirectToAction("ListarTablero");
     }
     // Controlador ELIMINAR 
     public IActionResult EliminarTablero(int idTablero)
     {
-        repositorioTablero.Delete(idTablero);
+        _repositorioTablero.Delete(idTablero);
         return RedirectToAction("ListarTablero");
     }
 }
