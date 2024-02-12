@@ -34,6 +34,10 @@ public class TareaController : Controller
     [HttpPost]
     public IActionResult CrearTarea(CrearTareaViewModel t)
     {
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction("ListarTarea");
+        }
         Tarea tarea = new(t);
         repositorioTarea.Create(tarea.IdTablero, tarea);
         return RedirectToAction("ListarTarea");
@@ -49,6 +53,10 @@ public class TareaController : Controller
     [HttpPost]
     public IActionResult ModificarTarea(ModificarTareaViewModel t)
     {
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction("ListarTarea");
+        }
         Tarea tarea = new(t);
         repositorioTarea.Update(tarea.Id, tarea);
         return RedirectToAction("ListarTarea");

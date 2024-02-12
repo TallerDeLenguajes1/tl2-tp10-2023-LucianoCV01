@@ -22,6 +22,10 @@ public class LoginController : Controller
     }
     public IActionResult Login(Usuario usuario)
     {
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction("Index");
+        }
         //existe el usuario?
         List<Usuario> usuarios = repositorioUsuario.GetAll();
         var usuarioLogin = usuarios.FirstOrDefault(u => u.NombreDeUsuario == usuario.NombreDeUsuario && u.Contrasenia == usuario.Contrasenia);

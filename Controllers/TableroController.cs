@@ -34,6 +34,10 @@ public class TableroController : Controller
     [HttpPost]
     public IActionResult CrearTablero(CrearTableroViewModel t)
     {
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction("ListarTablero");
+        }
         Tablero tablero = new(t);
         repositorioTablero.Create(tablero);
         // falta campo idUsuarioPropietario
@@ -50,6 +54,10 @@ public class TableroController : Controller
     [HttpPost]
     public IActionResult ModificarTablero(ModificarTableroViewModel t)
     {
+        if (!ModelState.IsValid)
+        {
+            return RedirectToAction("ListarTablero");
+        }
         Tablero tablero = new(t);
         repositorioTablero.Update(tablero.Id, tablero);
         return RedirectToAction("ListarTablero");
