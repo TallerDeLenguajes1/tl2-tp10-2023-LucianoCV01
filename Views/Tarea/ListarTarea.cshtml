@@ -1,4 +1,4 @@
-@model List<Tarea>
+@model tl2_tp10_2023_LucianoCV01.ViewModels.ListarTareaViewModel
 
 <h2>Lista Tareas</h2>
 
@@ -6,7 +6,6 @@
     <thead>
         <tr>
             <th hidden>ID Tarea</th>
-            <th hidden>ID Tablero</th>
             <th>Nombre</th>
             <th>Estado</th>
             <th>Descripcion</th>
@@ -17,11 +16,10 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var tarea in Model)
+        @foreach (var tarea in Model.Tareas)
         {
             <tr>
                 <td hidden>@tarea.Id</td>
-                <td hidden>@tarea.IdTablero</td>
                 <td>@tarea.Nombre</td>
                 <td>@tarea.Estado</td>
                 <td>@tarea.Descripcion</td>

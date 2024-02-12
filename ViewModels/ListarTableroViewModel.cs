@@ -10,6 +10,7 @@ namespace tl2_tp10_2023_LucianoCV01.ViewModels
 
         public ListarTableroViewModel()
         {
+            Tableros = new List<TableroViewModel>();
         }
         public ListarTableroViewModel(List<Tablero> tableros)
         {

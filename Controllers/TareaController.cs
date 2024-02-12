@@ -2,6 +2,7 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using tl2_tp10_2023_LucianoCV01.Models;
 using tl2_tp10_2023_LucianoCV01.Repository;
+using tl2_tp10_2023_LucianoCV01.ViewModels;
 
 namespace tl2_tp10_2023_LucianoCV01.Controllers;
 
@@ -19,19 +20,22 @@ public class TareaController : Controller
     [HttpGet]
     public IActionResult ListarTarea(int idTablero)
     {
-        List<Tarea> tareas = repositorioTarea.GetByIdTablero(2);
-        return View(tareas);
+        List<Tarea> tareas = repositorioTarea.GetByIdTablero(idTablero);
+        ListarTareaViewModel listarTareaViewModel = new(tareas);
+        return View(listarTareaViewModel);
     }
     // Controlador CREAR
     [HttpGet]
     public IActionResult CrearTarea()
     {
-        return View(new Tarea());
+        CrearTareaViewModel crearTareaViewModel = new();
+        return View(crearTareaViewModel);
     }
     [HttpPost]
-    public IActionResult CrearTarea(Tarea t)
+    public IActionResult CrearTarea(CrearTareaViewModel t)
     {
-        repositorioTarea.Create(t.IdTablero, t);
+        Tarea tarea = new(t);
+        repositorioTarea.Create(tarea.IdTablero, tarea);
         return RedirectToAction("ListarTarea");
     }
     // Controlador MODIFICAR
@@ -39,12 +43,14 @@ public class TareaController : Controller
     public IActionResult ModificarTarea(int idTarea)
     {
         Tarea tareaModificar = repositorioTarea.GetById(idTarea);
-        return View(tareaModificar);
+        ModificarTareaViewModel modificarTareaViewModel = new(tareaModificar);
+        return View(modificarTareaViewModel);
     }
     [HttpPost]
-    public IActionResult ModificarTarea(Tarea t)
+    public IActionResult ModificarTarea(ModificarTareaViewModel t)
     {
-        repositorioTarea.Update(t.Id, t);
+        Tarea tarea = new(t);
+        repositorioTarea.Update(tarea.Id, tarea);
         return RedirectToAction("ListarTarea");
     }
     // Controlador ELIMINAR
