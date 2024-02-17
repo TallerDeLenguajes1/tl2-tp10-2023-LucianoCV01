@@ -20,6 +20,10 @@ public class TableroController : Controller
     [HttpGet]
     public IActionResult ListarTablero()
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         List<Tablero> tableros = _repositorioTablero.GetAll();
         ListarTableroViewModel listarTableroViewModel = new(tableros);
         return View(listarTableroViewModel);
@@ -28,12 +32,20 @@ public class TableroController : Controller
     [HttpGet]
     public IActionResult CrearTablero()
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         CrearTableroViewModel crearTableroViewModel = new();
         return View(crearTableroViewModel);
     }
     [HttpPost]
     public IActionResult CrearTablero(CrearTableroViewModel t)
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         if (!ModelState.IsValid)
         {
             return RedirectToAction("ListarTablero");
@@ -47,6 +59,10 @@ public class TableroController : Controller
     [HttpGet]
     public IActionResult ModificarTablero(int idTablero)
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         Tablero tableroModificar = _repositorioTablero.GetById(idTablero);
         ModificarTableroViewModel modificarTableroViewModel = new(tableroModificar);
         return View(modificarTableroViewModel);
@@ -54,6 +70,10 @@ public class TableroController : Controller
     [HttpPost]
     public IActionResult ModificarTablero(ModificarTableroViewModel t)
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         if (!ModelState.IsValid)
         {
             return RedirectToAction("ListarTablero");
@@ -65,7 +85,20 @@ public class TableroController : Controller
     // Controlador ELIMINAR 
     public IActionResult EliminarTablero(int idTablero)
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         _repositorioTablero.Delete(idTablero);
         return RedirectToAction("ListarTablero");
+    }
+
+    private bool isLogin()
+    {
+        return HttpContext.Session != null && HttpContext.Session.GetString("NombreDeUsuario") != null;
+    }
+    private bool isAdmin()
+    {
+        return isLogin() && HttpContext.Session.GetString("Rol") == "administrador";
     }
 }

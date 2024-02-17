@@ -20,6 +20,10 @@ public class TareaController : Controller
     [HttpGet]
     public IActionResult ListarTarea(int idTablero)
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         List<Tarea> tareas = _repositorioTarea.GetByIdTablero(idTablero);
         ListarTareaViewModel listarTareaViewModel = new(tareas);
         return View(listarTareaViewModel);
@@ -28,12 +32,20 @@ public class TareaController : Controller
     [HttpGet]
     public IActionResult CrearTarea()
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         CrearTareaViewModel crearTareaViewModel = new();
         return View(crearTareaViewModel);
     }
     [HttpPost]
     public IActionResult CrearTarea(CrearTareaViewModel t)
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         if (!ModelState.IsValid)
         {
             return RedirectToAction("ListarTarea");
@@ -46,6 +58,10 @@ public class TareaController : Controller
     [HttpGet]
     public IActionResult ModificarTarea(int idTarea)
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         Tarea tareaModificar = _repositorioTarea.GetById(idTarea);
         ModificarTareaViewModel modificarTareaViewModel = new(tareaModificar);
         return View(modificarTareaViewModel);
@@ -53,6 +69,10 @@ public class TareaController : Controller
     [HttpPost]
     public IActionResult ModificarTarea(ModificarTareaViewModel t)
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         if (!ModelState.IsValid)
         {
             return RedirectToAction("ListarTarea");
@@ -64,7 +84,20 @@ public class TareaController : Controller
     // Controlador ELIMINAR
     public IActionResult EliminarTarea(int idTarea)
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         _repositorioTarea.Delete(idTarea);
         return RedirectToAction("ListarTarea");
+    }
+
+    private bool isLogin()
+    {
+        return HttpContext.Session != null && HttpContext.Session.GetString("NombreDeUsuario") != null;
+    }
+    private bool isAdmin()
+    {
+        return isLogin() && HttpContext.Session.GetString("Rol") == "administrador";
     }
 }

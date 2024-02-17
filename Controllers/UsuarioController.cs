@@ -20,6 +20,10 @@ public class UsuarioController : Controller
     [HttpGet]
     public IActionResult ListarUsuario()
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         List<Usuario> usuarios = _repositorioUsuario.GetAll();
         ListarUsuarioViewModel listarUsuarioViewModel = new(usuarios);
         return View(listarUsuarioViewModel);
@@ -28,12 +32,20 @@ public class UsuarioController : Controller
     [HttpGet]
     public IActionResult CrearUsuario()
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         CrearUsuarioViewModel crearUsuarioViewModel = new();
         return View(crearUsuarioViewModel);
     }
     [HttpPost]
     public IActionResult CrearUsuario(CrearUsuarioViewModel u)
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         if (!ModelState.IsValid)
         {
             return RedirectToAction("ListarUsuario");
@@ -46,6 +58,10 @@ public class UsuarioController : Controller
     [HttpGet]
     public IActionResult ModificarUsuario(int idUsuario)
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         Usuario usuarioModificar = _repositorioUsuario.GetById(idUsuario);
         ModificarUsuarioViewModel modificarUsuarioViewModelnew = new(usuarioModificar);
         return View(modificarUsuarioViewModelnew);
@@ -53,6 +69,10 @@ public class UsuarioController : Controller
     [HttpPost]
     public IActionResult ModificarUsuario(ModificarUsuarioViewModel u)
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         if (!ModelState.IsValid)
         {
             return RedirectToAction("ListarUsuario");
@@ -64,7 +84,20 @@ public class UsuarioController : Controller
     // Controlador ELIMINAR
     public IActionResult EliminarUsuario(int idUsuario)
     {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         _repositorioUsuario.Delete(idUsuario);
         return RedirectToAction("ListarUsuario");
+    }
+
+    private bool isLogin()
+    {
+        return HttpContext.Session != null && HttpContext.Session.GetString("NombreDeUsuario") != null;
+    }
+    private bool isAdmin()
+    {
+        return isLogin() && HttpContext.Session.GetString("Rol") == "administrador";
     }
 }
