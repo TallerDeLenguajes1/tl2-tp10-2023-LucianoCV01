@@ -8,7 +8,11 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
@@ -18,5 +22,34 @@ html {
 }
 
 body {
-  margin-bottom: 60px;
+  background-color: whitesmoke;
+}
+
+.navbar {
+  background-color: #100e0f !important;
+}
+
+.footer {
+  color: white !important;
+  background-color: #100e0f;
+}
+
+.preguntaRegistro{
+  padding-right: 14px;
+}
+
+.registro {
+  padding-left: 0px;
+  color: #108ccc;
+}
+
+.recuperarContra {
+  color: #108ccc;
+  padding-left: 0px;
+  padding-top: 0px;
+}
+
+.iniciarSesion {
+  color: white;
+  background-color: #108ccc;
 }
