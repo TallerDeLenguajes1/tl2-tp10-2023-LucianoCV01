@@ -12,6 +12,7 @@ namespace tl2_tp10_2023_LucianoCV01.ViewModels
         public ModificarTareaViewModel(Tarea tarea)
         {
             Id = tarea.Id;
+            IdTablero = tarea.IdTablero;
             Nombre = tarea.Nombre;
             Estado = tarea.Estado;
             Descripcion = tarea.Descripcion;
@@ -22,6 +23,10 @@ namespace tl2_tp10_2023_LucianoCV01.ViewModels
         [Required(ErrorMessage = "Este campo es requerido.")]
         [Display(Name = "Id")]
         public int Id { get; set; }
+
+        [Required(ErrorMessage = "Este campo es requerido.")]
+        [Display(Name = "IdTablero")]
+        public int IdTablero { get; set; }
 
         [Required(ErrorMessage = "Este campo es requerido.")]
         [StringLength(60)]
@@ -36,7 +41,6 @@ namespace tl2_tp10_2023_LucianoCV01.ViewModels
         [Display(Name = "Descripcion")]
         public string? Descripcion { get; set; }
 
-        [StringLength(30)]
         [Display(Name = "Color")]
         public ColorEtiqueta Color { get; set; }
 

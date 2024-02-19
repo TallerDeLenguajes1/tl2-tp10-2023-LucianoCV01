@@ -18,6 +18,7 @@ namespace tl2_tp10_2023_LucianoCV01.Models
         public Tarea(ModificarTareaViewModel t)
         {
             Id = t.Id;
+            IdTablero = t.IdTablero;
             Nombre = t.Nombre;
             Estado = t.Estado;
             Descripcion = t.Descripcion;

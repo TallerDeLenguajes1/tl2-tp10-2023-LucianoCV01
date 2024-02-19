@@ -6,14 +6,17 @@ namespace tl2_tp10_2023_LucianoCV01.ViewModels
 {
     public class ListarTareaViewModel
     {
+        public int IdTablero { get; set; }
         public List<TareaViewModel> Tareas { get; set; }
 
         public ListarTareaViewModel()
         {
+            IdTablero = -9999;
             Tareas = new List<TareaViewModel>();
         }
-        public ListarTareaViewModel(List<Tarea> tareas)
+        public ListarTareaViewModel(int idTablero, List<Tarea> tareas)
         {
+            IdTablero = idTablero;
             Tareas = tareas.Select(t => new TareaViewModel(t)).ToList();
         }
     }

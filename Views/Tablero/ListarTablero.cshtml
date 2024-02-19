@@ -20,7 +20,11 @@
                 {
                     <tr>
                         <td hidden>@tablero.Id</td>
-                        <td>@tablero.Nombre</td>
+                        <td>
+                            <a asp-area="" asp-controller="Tarea" asp-action="ListarTarea"
+                                asp-route-idTablero="@tablero.Id">@tablero.Nombre</a>
+                        </td>
+
                         <td>@tablero.Descripcion</td>
                         <td>
                             <a asp-controller="Tablero" asp-action="ModificarTablero"

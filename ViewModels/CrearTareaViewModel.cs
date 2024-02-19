@@ -23,7 +23,6 @@ namespace tl2_tp10_2023_LucianoCV01.ViewModels
         [Display(Name = "Descripcion")]
         public string? Descripcion { get; set; }
 
-        [StringLength(30)]
         [Display(Name = "Color")]
         public ColorEtiqueta Color { get; set; }
 

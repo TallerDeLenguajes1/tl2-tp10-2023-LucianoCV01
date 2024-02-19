@@ -25,18 +25,19 @@ public class TareaController : Controller
             return RedirectToRoute(new { controller = "Home", action = "Error404" });
         }
         List<Tarea> tareas = _repositorioTarea.GetByIdTablero(idTablero);
-        ListarTareaViewModel listarTareaViewModel = new(tareas);
+        ListarTareaViewModel listarTareaViewModel = new(idTablero, tareas);
         return View(listarTareaViewModel);
     }
     // Controlador CREAR
     [HttpGet]
-    public IActionResult CrearTarea()
+    public IActionResult CrearTarea(int idTablero)
     {
         if (!isLogin())
         {
             return RedirectToRoute(new { controller = "Home", action = "Error404" });
         }
         CrearTareaViewModel crearTareaViewModel = new();
+        crearTareaViewModel.IdTablero = idTablero;
         return View(crearTareaViewModel);
     }
     [HttpPost]
@@ -52,7 +53,7 @@ public class TareaController : Controller
         }
         Tarea tarea = new(t);
         _repositorioTarea.Create(tarea.IdTablero, tarea);
-        return RedirectToAction("ListarTarea");
+        return RedirectToAction("ListarTarea", new { idTablero = tarea.IdTablero });
     }
     // Controlador MODIFICAR
     [HttpGet]
@@ -79,7 +80,7 @@ public class TareaController : Controller
         }
         Tarea tarea = new(t);
         _repositorioTarea.Update(tarea.Id, tarea);
-        return RedirectToAction("ListarTarea");
+        return RedirectToAction("ListarTarea", new { idTablero = tarea.IdTablero });
     }
     // Controlador ELIMINAR
     public IActionResult EliminarTarea(int idTarea)
@@ -88,8 +89,9 @@ public class TareaController : Controller
         {
             return RedirectToRoute(new { controller = "Home", action = "Error404" });
         }
+        int idTablero = _repositorioTarea.GetById(idTarea).IdTablero;
         _repositorioTarea.Delete(idTarea);
-        return RedirectToAction("ListarTarea");
+        return RedirectToAction("ListarTarea", new { idTablero });
     }
 
     private bool isLogin()
