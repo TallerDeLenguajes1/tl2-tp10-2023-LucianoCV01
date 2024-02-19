@@ -25,7 +25,9 @@ public class TableroController : Controller
             return RedirectToRoute(new { controller = "Home", action = "Error404" });
         }
         List<Tablero> tableros = _repositorioTablero.GetAll();
-        ListarTableroViewModel listarTableroViewModel = new(tableros);
+        Console.WriteLine(HttpContext.Session.GetString("Id"));
+        int? idUsuarioPropietario = HttpContext.Session.GetInt32("Id");
+        ListarTableroViewModel listarTableroViewModel = new(tableros, idUsuarioPropietario);
         return View(listarTableroViewModel);
     }
     // Controlador CREAR
@@ -50,9 +52,11 @@ public class TableroController : Controller
         {
             return RedirectToAction("ListarTablero");
         }
+        int? idUsuarioPropietarioNullable = HttpContext.Session.GetInt32("Id");
+        int idUsuarioPropietario = idUsuarioPropietarioNullable ?? -9999;
         Tablero tablero = new(t);
+        tablero.IdUsuarioPropietario = idUsuarioPropietario;
         _repositorioTablero.Create(tablero);
-        // falta campo idUsuarioPropietario
         return RedirectToAction("ListarTablero");
     }
     // Controlador MODIFICAR

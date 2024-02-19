@@ -20,7 +20,7 @@ public class UsuarioController : Controller
     [HttpGet]
     public IActionResult ListarUsuario()
     {
-        if (!isLogin() && !isAdmin())
+        if (!isAdmin())
         {
             return RedirectToRoute(new { controller = "Home", action = "Error404" });
         }
