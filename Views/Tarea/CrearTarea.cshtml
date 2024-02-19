@@ -10,7 +10,7 @@
     </div>
     <div class="form-group">
         <label asp-for="@Model.Estado"></label>
-        <input asp-for="@Model.Estado" class="form-control" />
+        <select asp-for="@Model.Estado" asp-items="Html.GetEnumSelectList<EstadoTarea>()" class="form-control"></select>
         <span asp-validation-for="@Model.Estado" class="text-danger"></span>
     </div>
     <div class="form-group">
@@ -20,7 +20,7 @@
     </div>
     <div class="form-group">
         <label asp-for="@Model.Color"></label>
-        <input asp-for="@Model.Color" class="form-control" />
+        <select asp-for="@Model.Color" asp-items="Html.GetEnumSelectList<ColorEtiqueta>()" class="form-control"></select>
         <span asp-validation-for="@Model.Color" class="text-danger"></span>
     </div>
     <div class="form-group">
