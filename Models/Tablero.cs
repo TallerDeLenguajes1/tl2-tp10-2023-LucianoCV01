@@ -15,6 +15,7 @@ namespace tl2_tp10_2023_LucianoCV01.Models
         public Tablero(ModificarTableroViewModel t)
         {
             Id = t.Id;
+            IdUsuarioPropietario = t.IdUsuarioPropietario;
             Nombre = t.Nombre;
             Descripcion = t.Descripcion;
         }

@@ -171,10 +171,11 @@ AND Tablero.idUsuarioPropietario != @participante;
         public void Update(int id, Tablero tablero)
         {
             // lanzar excepcion si el tablero que quiero actualizar no existe.
-            const string queryString = $"UPDATE Tablero SET nombre = (@name), descripcion = (@descripcion) WHERE id = (@id);";
+            const string queryString = $"UPDATE Tablero SET idUsuarioPropietario = (@usuario), nombre = (@name), descripcion = (@descripcion) WHERE id = (@id);";
             using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
+                command.Parameters.Add(new SqliteParameter("@usuario", tablero.IdUsuarioPropietario));
                 command.Parameters.Add(new SqliteParameter("@name", tablero.Nombre));
                 command.Parameters.Add(new SqliteParameter("@descripcion", tablero.Descripcion));
                 command.Parameters.Add(new SqliteParameter("@id", id));
