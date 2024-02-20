@@ -82,7 +82,7 @@ public class TableroController : Controller
             return RedirectToRoute(new { controller = "Home", action = "Error404" });
         }
         ModificarTableroViewModel modificarTableroViewModel = new(tableroModificar);
-        
+
         List<Usuario> usuarios = _repositorioUsuario.GetAll();
         ListarUsuarioViewModel usuariosDisponibles = new(usuarios);
         UsuarioViewModel usuarioSession = usuariosDisponibles.Usuarios.FirstOrDefault(u => u.Id == idEnSession())!;
@@ -114,6 +114,11 @@ public class TableroController : Controller
     public IActionResult EliminarTablero(int idTablero)
     {
         if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
+        Tablero tablero = _repositorioTablero.GetById(idTablero);
+        if (!isAdmin() && idEnSession() != tablero.IdUsuarioPropietario)
         {
             return RedirectToRoute(new { controller = "Home", action = "Error404" });
         }
