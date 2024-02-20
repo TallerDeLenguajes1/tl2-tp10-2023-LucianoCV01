@@ -12,7 +12,8 @@
 
 <body>
     <header>
-        <nav id="colorFondoHeader" class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white box-shadow mb-3 p-3">
+        <nav id="colorFondoHeader"
+            class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white box-shadow mb-3 p-3">
             <div class="container-fluid">
                 <a class="navbar-brand text-white" asp-area="" asp-controller="Home" asp-action="Index">TASKMASTER</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse"
@@ -42,8 +43,16 @@
                         }
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Login" asp-action="Index">Iniciar
-                                Sesion</a>
+                                Sesión</a>
                         </li>
+                        @if (ViewContext.HttpContext.Session.GetString("NombreDeUsuario") != null)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Login"
+                                    asp-action="CerrarSesion">Cerrar
+                                    Sesión</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

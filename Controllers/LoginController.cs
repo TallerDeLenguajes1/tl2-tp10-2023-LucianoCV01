@@ -36,11 +36,24 @@ public class LoginController : Controller
         //Devuelvo el usuario al Home
         return RedirectToRoute(new { controller = "Home", action = "Index" });
     }
+    public IActionResult CerrarSesion()
+    {
+        if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
+        HttpContext.Session.Clear();
+        return RedirectToRoute(new { controller = "Home", action = "Index" });
+    }
 
     private void logearUsuario(Usuario usuario)
     {
         HttpContext.Session.SetInt32("Id", usuario.Id);
         HttpContext.Session.SetString("NombreDeUsuario", usuario.NombreDeUsuario);
         HttpContext.Session.SetString("Rol", usuario.Rol.ToString());
+    }
+    private bool isLogin()
+    {
+        return HttpContext.Session != null && HttpContext.Session.GetString("NombreDeUsuario") != null;
     }
 }

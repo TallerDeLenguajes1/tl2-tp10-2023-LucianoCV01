@@ -2,7 +2,7 @@
 
 <div class="container d-flex justify-content-center align-items-center mt-5 mb-4" style="min-height: 50vh;">
     <div class="card p-4" style="max-width: 350px; width: 100%; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
-        <h5 class="mb-4 text-center">Regístrate para continuar</h5>
+        <h5 class="mb-4 text-center">Registrar nuevo usuario</h5>
 
         <form asp-controller="Usuario" asp-action="CrearUsuario" method="post">
             <div class="form-group mb-3">
@@ -30,17 +30,20 @@
             </div>
         </form>
 
-        <h6 class="mb-3 mt-3 text-center">O continúa con:</h6>
-        <div class="text-center">
-            <a class="btn btn-outline-danger mb-2 w-100" asp-area="" asp-controller="Home"
-                asp-action="Error404">Google</a>
-            <a class="btn btn-outline-success mb-2 w-100" asp-area="" asp-controller="Home"
-                asp-action="Error404">Microsoft</a>
-            <a class="btn btn-outline-secondary mb-2 w-100" asp-area="" asp-controller="Home"
-                asp-action="Error404">Apple</a>
-            <a class="btn btn-outline-primary mb-2 w-100" asp-area="" asp-controller="Home"
-                asp-action="Error404">Facebook</a>
-        </div>
+        @if (ViewContext.HttpContext.Session.GetString("Rol") != "administrador")
+        {
+            <h6 class="mb-3 mt-3 text-center">O continúa con:</h6>
+            <div class="text-center">
+                <a class="btn btn-outline-danger mb-2 w-100" asp-area="" asp-controller="Home"
+                    asp-action="Error404">Google</a>
+                <a class="btn btn-outline-success mb-2 w-100" asp-area="" asp-controller="Home"
+                    asp-action="Error404">Microsoft</a>
+                <a class="btn btn-outline-secondary mb-2 w-100" asp-area="" asp-controller="Home"
+                    asp-action="Error404">Apple</a>
+                <a class="btn btn-outline-primary mb-2 w-100" asp-area="" asp-controller="Home"
+                    asp-action="Error404">Facebook</a>
+            </div>
+        }
     </div>
 </div>
 
