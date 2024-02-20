@@ -32,26 +32,22 @@ public class UsuarioController : Controller
     [HttpGet]
     public IActionResult CrearUsuario()
     {
-        if (!isLogin())
-        {
-            return RedirectToRoute(new { controller = "Home", action = "Error404" });
-        }
         CrearUsuarioViewModel crearUsuarioViewModel = new();
         return View(crearUsuarioViewModel);
     }
     [HttpPost]
     public IActionResult CrearUsuario(CrearUsuarioViewModel u)
     {
-        if (!isLogin())
-        {
-            return RedirectToRoute(new { controller = "Home", action = "Error404" });
-        }
         if (!ModelState.IsValid)
         {
             return RedirectToAction("ListarUsuario");
         }
         Usuario usuario = new(u);
         _repositorioUsuario.Create(usuario);
+        if (!isAdmin())
+        {
+            return RedirectToRoute(new { controller = "Login", action = "Index" });
+        }
         return RedirectToAction("ListarUsuario");
     }
     // Controlador MODIFICAR
