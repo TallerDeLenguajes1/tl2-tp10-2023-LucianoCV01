@@ -6,6 +6,12 @@ namespace tl2_tp10_2023_LucianoCV01.ViewModels
 {
     public class CrearTableroViewModel
     {
+        public List<UsuarioViewModel>? UsuariosDisponibles  { get; set; }
+
+        [Required(ErrorMessage = "Este campo es requerido.")]
+        [Display(Name = "Id Usuario Propietario")]
+        public int IdUsuarioPropietario { get; set; }
+
         [Required(ErrorMessage = "Este campo es requerido.")]
         [StringLength(60)]
         [Display(Name = "Nombre")]

@@ -10,11 +10,13 @@ public class TableroController : Controller
 {
     private readonly ILogger<TableroController> _logger;
     private ITableroRepository _repositorioTablero;
+    private IUsuarioRepository _repositorioUsuario;
 
-    public TableroController(ILogger<TableroController> logger, ITableroRepository repositorioTablero)
+    public TableroController(ILogger<TableroController> logger, ITableroRepository repositorioTablero, IUsuarioRepository repositorioUsuario)
     {
         _logger = logger;
         _repositorioTablero = repositorioTablero;
+        _repositorioUsuario = repositorioUsuario;
     }
     // Controlador LISTAR
     [HttpGet]
@@ -40,6 +42,15 @@ public class TableroController : Controller
             return RedirectToRoute(new { controller = "Home", action = "Error404" });
         }
         CrearTableroViewModel crearTableroViewModel = new();
+        List<Usuario> usuarios = _repositorioUsuario.GetAll();
+        ListarUsuarioViewModel usuariosDisponibles = new(usuarios);
+        UsuarioViewModel usuarioSession = usuariosDisponibles.Usuarios.FirstOrDefault(u => u.Id == idEnSession())!;
+        if (usuarioSession != null)
+        {
+            usuariosDisponibles.Usuarios.Remove(usuarioSession);
+            usuariosDisponibles.Usuarios.Insert(0, usuarioSession);
+        }
+        crearTableroViewModel.UsuariosDisponibles = usuariosDisponibles.Usuarios;
         return View(crearTableroViewModel);
     }
     [HttpPost]
@@ -53,10 +64,7 @@ public class TableroController : Controller
         {
             return RedirectToAction("ListarTablero");
         }
-        int? idUsuarioPropietarioNullable = HttpContext.Session.GetInt32("Id");
-        int idUsuarioPropietario = idUsuarioPropietarioNullable ?? -9999;
         Tablero tablero = new(t);
-        tablero.IdUsuarioPropietario = idUsuarioPropietario;
         _repositorioTablero.Create(tablero);
         return RedirectToAction("ListarTablero");
     }

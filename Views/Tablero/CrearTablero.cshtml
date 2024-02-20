@@ -1,19 +1,52 @@
 @model tl2_tp10_2023_LucianoCV01.ViewModels.CrearTableroViewModel
 
-<form asp-controller="Tablero" asp-action="CrearTablero" method="post">
-    <div class="form-group">
-        <label asp-for="@Model.Nombre"></label>
-        <input asp-for="@Model.Nombre" class="form-control" />
-        <span asp-validation-for="@Model.Nombre" class="text-danger"></span>
-    </div>
-    <div class="form-group">
-        <label asp-for="@Model.Descripcion"></label>
-        <input asp-for="@Model.Descripcion" class="form-control" />
-        <span asp-validation-for="@Model.Descripcion" class="text-danger"></span>
-    </div>
+<div class="container d-flex justify-content-center align-items-center mt-5 mb-4" style="min-height: 50vh;">
+    <div class="card p-4" style="max-width: 350px; width: 100%; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+        <h5 class="mb-4 text-center">Crear nuevo tablero</h5>
 
-    <button type="submit" class="btn btn-primary">Enviar</button>
-</form>
+        <form asp-controller="Tablero" asp-action="CrearTablero" method="post">
+            @if (ViewContext.HttpContext.Session.GetString("Rol") == "administrador")
+            {
+                <div class="form-group mb-3">
+                    <label class="form-label" asp-for="@Model.IdUsuarioPropietario">Selecciona al usuario propietario:
+                    </label>
+                    <select asp-for="@Model.IdUsuarioPropietario" class="form-control">
+                        @foreach (var usuario in Model.UsuariosDisponibles)
+                        {
+                            @if (usuario.Id != -9999)
+                            {
+                                <option value="@usuario.Id">@usuario.NombreDeUsuario</option>
+                            }
+                        }
+                    </select>
+                    <span asp-validation-for="@Model.IdUsuarioPropietario" class="text-danger"></span>
+                </div>
+            }
+            else
+            {
+                var primerUsuarioDisponible = Model.UsuariosDisponibles.FirstOrDefault();
+                if (primerUsuarioDisponible != null)
+                {
+                    <input type="hidden" asp-for="@Model.IdUsuarioPropietario" value="@primerUsuarioDisponible.Id" />
+                }
+            }
+            <div class="form-group mb-3">
+                <label asp-for="@Model.Nombre" hidden></label>
+                <input asp-for="@Model.Nombre" class="form-control" placeholder="Introduce un nombre" />
+                <span asp-validation-for="@Model.Nombre" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="@Model.Descripcion" hidden></label>
+                <input asp-for="@Model.Descripcion" class="form-control" placeholder="Introduce una descripción" />
+                <span asp-validation-for="@Model.Descripcion" class="text-danger"></span>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn iniciarSesion">Agregar</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
