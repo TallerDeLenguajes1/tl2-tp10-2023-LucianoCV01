@@ -13,7 +13,8 @@
             </div>
             <div class="form-group mb-3">
                 <label asp-for="@Model.Contrasenia"></label>
-                <input asp-for="@Model.Contrasenia" class="form-control" type="password" />
+                <input asp-for="@Model.Contrasenia" class="form-control" type="password" 
+                placeholder="Introduce la contraseña"/>
                 <span asp-validation-for="@Model.Contrasenia" class="text-danger"></span>
             </div>
             @if (ViewContext.HttpContext.Session.GetString("Rol") == "administrador")

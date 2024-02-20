@@ -23,9 +23,12 @@
                         
                             <a asp-controller="Usuario" asp-action="ModificarUsuario" asp-route-idUsuario="@usuario.Id"
                                 class="btn btn-warning mt-1 mr-1">Modificar</a>
-                            <a asp-controller="Usuario" asp-action="EliminarUsuario" asp-route-idUsuario="@usuario.Id"
-                                onclick="return confirm('¿Estas seguro que quieres eliminar el elemento?')"
-                                class="btn btn-danger mt-1">Eliminar</a>
+                            @if (usuario.Rol.ToString() != "administrador")
+                            {
+                                <a asp-controller="Usuario" asp-action="EliminarUsuario" asp-route-idUsuario="@usuario.Id"
+                                    onclick="return confirm('¿Estas seguro que quieres eliminar el elemento?')"
+                                    class="btn btn-danger mt-1">Eliminar</a>
+                            }
                         </div>
                     </div>
                 </div>

@@ -71,6 +71,10 @@ public class UsuarioController : Controller
         {
             return RedirectToRoute(new { controller = "Home", action = "Error404" });
         }
+        if (!isAdmin() && idEnSession() != idUsuario)
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
         Usuario usuarioModificar = _repositorioUsuario.GetById(idUsuario);
         ModificarUsuarioViewModel modificarUsuarioViewModelnew = new(usuarioModificar);
         return View(modificarUsuarioViewModelnew);
@@ -94,6 +98,10 @@ public class UsuarioController : Controller
     public IActionResult EliminarUsuario(int idUsuario)
     {
         if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
+        if (!isAdmin() && idEnSession() != idUsuario)
         {
             return RedirectToRoute(new { controller = "Home", action = "Error404" });
         }
