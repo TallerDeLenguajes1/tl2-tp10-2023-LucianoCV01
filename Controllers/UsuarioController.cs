@@ -20,11 +20,24 @@ public class UsuarioController : Controller
     [HttpGet]
     public IActionResult ListarUsuario()
     {
-        if (!isAdmin())
+        if (!isLogin())
         {
             return RedirectToRoute(new { controller = "Home", action = "Error404" });
         }
-        List<Usuario> usuarios = _repositorioUsuario.GetAll();
+        int idUsuario = idEnSession();
+        Usuario usuario = _repositorioUsuario.GetById(idUsuario);
+        List<Usuario> usuarios = new();
+        if (isAdmin())
+        {
+            usuarios = _repositorioUsuario.GetAll();
+            Usuario usuarioExistente = usuarios.FirstOrDefault(u => u.Id == usuario.Id)!;
+
+            if (usuarioExistente != null)
+            {
+                usuarios.Remove(usuarioExistente);
+            }
+        }
+        usuarios.Insert(0, usuario);
         ListarUsuarioViewModel listarUsuarioViewModel = new(usuarios);
         return View(listarUsuarioViewModel);
     }
@@ -95,5 +108,11 @@ public class UsuarioController : Controller
     private bool isAdmin()
     {
         return isLogin() && HttpContext.Session.GetString("Rol") == "administrador";
+    }
+    private int idEnSession()
+    {
+        int? idUsuarioNullable = HttpContext.Session.GetInt32("Id");
+        int idUsuario = idUsuarioNullable ?? -9999;
+        return idUsuario;
     }
 }
