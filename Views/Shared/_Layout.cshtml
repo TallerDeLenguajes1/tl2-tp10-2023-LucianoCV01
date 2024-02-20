@@ -41,15 +41,18 @@
                                     asp-action="ListarTablero">Tableros</a>
                             </li>
                         }
-                        <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Login" asp-action="Index">Iniciar
-                                Sesión</a>
-                        </li>
                         @if (ViewContext.HttpContext.Session.GetString("NombreDeUsuario") != null)
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-area="" asp-controller="Login"
                                     asp-action="CerrarSesion">Cerrar
+                                    Sesión</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Login" asp-action="Index">Iniciar
                                     Sesión</a>
                             </li>
                         }

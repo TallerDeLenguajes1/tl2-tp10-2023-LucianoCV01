@@ -91,6 +91,69 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
             }
             return tableros;
         }
+        public List<Tablero> GetByIdUsuarioParticipante(int idUsuario)
+        {
+            // lanzar excepcion si el usuario propietario no existe
+            // si existe puede que tenga tableros relacionados como no.
+            const string queryString = @"SELECT Tablero.id, Tablero.idUsuarioPropietario, Tablero.nombre, Tablero.descripcion 
+FROM Tablero 
+INNER JOIN Tarea ON Tablero.id = Tarea.idTablero 
+WHERE Tarea.idUsuarioAsignado = @participante 
+AND Tablero.idUsuarioPropietario != @participante;
+";
+            List<Tablero> tableros = new List<Tablero>();
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
+            {
+                SqliteCommand command = new SqliteCommand(queryString, connection);
+                command.Parameters.Add(new SqliteParameter("@participante", idUsuario));
+                connection.Open();
+                using (SqliteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var tablero = new Tablero
+                        {
+                            Id = Convert.ToInt32(reader["id"]),
+                            IdUsuarioPropietario = Convert.ToInt32(reader["idUsuarioPropietario"]),
+                            Nombre = reader["nombre"].ToString()!,
+                            Descripcion = reader["descripcion"].ToString()
+                        };
+                        tableros.Add(tablero);
+                    }
+                }
+                connection.Close();
+            }
+            return tableros;
+        }
+        public List<Tablero> GetByIdUsuarioAjenos(int idUsuario)
+        {
+            // lanzar excepcion si el usuario propietario no existe
+            // si existe puede que tenga tableros relacionados como no.
+            const string queryString = @"SELECT Tablero.id, Tablero.idUsuarioPropietario, Tablero.nombre, Tablero.descripcion FROM Tablero LEFT JOIN Tarea ON Tablero.id = Tarea.idTablero AND Tarea.idUsuarioAsignado = @ajeno WHERE Tablero.idUsuarioPropietario != @ajeno AND Tarea.idTablero IS NULL;";
+            List<Tablero> tableros = new List<Tablero>();
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
+            {
+                SqliteCommand command = new SqliteCommand(queryString, connection);
+                command.Parameters.Add(new SqliteParameter("@ajeno", idUsuario));
+                connection.Open();
+                using (SqliteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var tablero = new Tablero
+                        {
+                            Id = Convert.ToInt32(reader["id"]),
+                            IdUsuarioPropietario = Convert.ToInt32(reader["idUsuarioPropietario"]),
+                            Nombre = reader["nombre"].ToString()!,
+                            Descripcion = reader["descripcion"].ToString()
+                        };
+                        tableros.Add(tablero);
+                    }
+                }
+                connection.Close();
+            }
+            return tableros;
+        }
         public void Create(Tablero tablero)
         {
             const string queryString = $"INSERT INTO Tablero (idUsuarioPropietario, nombre, descripcion) VALUES (@usuario, @name, @descripcion)";

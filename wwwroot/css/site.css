@@ -57,3 +57,7 @@ body {
 main{
   min-height: 80vh;
 }
+
+.tituloTableroEnlace {
+  color: #108ccc;
+}

@@ -24,10 +24,11 @@ public class TableroController : Controller
         {
             return RedirectToRoute(new { controller = "Home", action = "Error404" });
         }
-        List<Tablero> tableros = _repositorioTablero.GetAll();
-        Console.WriteLine(HttpContext.Session.GetString("Id"));
-        int? idUsuarioPropietario = HttpContext.Session.GetInt32("Id");
-        ListarTableroViewModel listarTableroViewModel = new(tableros, idUsuarioPropietario);
+        int idUsuario = idEnSession();
+        List<Tablero> tablerosPropios = _repositorioTablero.GetByIdUsuario(idUsuario);
+        List<Tablero> tablerosParticipando = _repositorioTablero.GetByIdUsuarioParticipante(idUsuario);
+        List<Tablero> tablerosAjenos = _repositorioTablero.GetByIdUsuarioAjenos(idUsuario);
+        ListarTableroViewModel listarTableroViewModel = new(tablerosPropios, tablerosParticipando, tablerosAjenos);
         return View(listarTableroViewModel);
     }
     // Controlador CREAR
@@ -104,5 +105,11 @@ public class TableroController : Controller
     private bool isAdmin()
     {
         return isLogin() && HttpContext.Session.GetString("Rol") == "administrador";
+    }
+    private int idEnSession()
+    {
+        int? idUsuarioNullable = HttpContext.Session.GetInt32("Id");
+        int idUsuario = idUsuarioNullable ?? -9999;
+        return idUsuario;
     }
 }
