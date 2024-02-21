@@ -1,0 +1,71 @@
+@model tl2_tp10_2023_LucianoCV01.ViewModels.ModificarTareaViewModel
+
+<div class="container d-flex justify-content-center align-items-center mt-5 mb-4" style="min-height: 50vh;">
+    <div class="card p-4" style="max-width: 350px; width: 100%; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+        <h5 class="mb-4 text-center">Modificar Datos</h5>
+
+        <form asp-controller="Tarea" asp-action="ModificarTarea" method="post">
+            <input hidden asp-for="@Model.Id">
+            <input hidden asp-for="@Model.IdTablero">
+
+            @if (ViewContext.HttpContext.Session.GetString("Rol") == "administrador" ||
+            ViewContext.HttpContext.Session.GetInt32("Id") == Model.IdDuenio)
+            {
+                <div class="form-group mb-3">
+                    <label asp-for="@Model.Nombre"></label>
+                    <input asp-for="@Model.Nombre" class="form-control" />
+                    <span asp-validation-for="@Model.Nombre" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="@Model.Descripcion">Descripción</label>
+                    <input asp-for="@Model.Descripcion" class="form-control" />
+                    <span asp-validation-for="@Model.Descripcion" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="@Model.Color">Elegir un color: </label>
+                    <select asp-for="@Model.Color" asp-items="Html.GetEnumSelectList<ColorEtiqueta>()"
+                        class="form-control"></select>
+                    <span asp-validation-for="@Model.Color" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label class="form-label" asp-for="@Model.IdUsuarioAsignado">Asignar a:
+                    </label>
+                    <select asp-for="@Model.IdUsuarioAsignado" class="form-control">
+                        @foreach (var usuario in Model.UsuariosDisponibles)
+                        {
+                            <option value="@usuario.Id">@usuario.NombreDeUsuario</option>
+                        }
+                    </select>
+                    <span asp-validation-for="@Model.IdUsuarioAsignado" class="text-danger"></span>
+                </div>
+            }
+            else
+            {
+                <input asp-for="@Model.Nombre" class="form-control" hidden="hidden" />
+                <input asp-for="@Model.Descripcion" class="form-control" hidden="hidden" />
+                <select asp-for="@Model.Color" asp-items="Html.GetEnumSelectList<ColorEtiqueta>()" class="form-control"
+                    hidden="hidden"></select>
+                <select asp-for="@Model.IdUsuarioAsignado" class="form-control" hidden="hidden">
+                    @foreach (var usuario in Model.UsuariosDisponibles)
+                    {
+                        <option value="@usuario.Id">@usuario.NombreDeUsuario</option>
+                    }
+                </select>
+            }
+            <div class="form-group mb-3">
+                <label asp-for="@Model.Estado">Seleccione el estado: </label>
+                <select asp-for="@Model.Estado" asp-items="Html.GetEnumSelectList<EstadoTarea>()"
+                    class="form-control"></select>
+                <span asp-validation-for="@Model.Estado" class="text-danger"></span>
+            </div>
+
+            <div class="text-center">
+                <button type="submit" class="btn iniciarSesion">Modificar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

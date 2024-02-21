@@ -1,0 +1,90 @@
+@model tl2_tp10_2023_LucianoCV01.ViewModels.ListarTableroViewModel
+
+<section>
+    <article>
+        <div class="d-flex justify-content-between align-items-center">
+            <h2 class="mt-3 mx-2">Mis Tableros</h2>
+            <a class="btn iniciarSesion" asp-area="" asp-controller="Tablero" asp-action="CrearTablero">Nuevo +</a>
+        </div>
+
+
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+            @foreach (var tablero in Model.TablerosPropios)
+            {
+                <div class="col">
+                    <div class="card shadow h-100">
+                        <div class="card-body">
+                            <a asp-area="" asp-controller="Tarea" asp-action="ListarTarea" asp-route-idTablero="@tablero.Id"
+                                class="text-decoration-none">
+                                <h5 class="card-title tituloTableroEnlace">@tablero.Nombre</h5>
+                            </a>
+                            <p class="card-text">@tablero.Descripcion</p>
+                            <a asp-controller="Tablero" asp-action="ModificarTablero" asp-route-idTablero="@tablero.Id"
+                                class="btn btn-warning">Modificar</a>
+                            <a asp-controller="Tablero" asp-action="EliminarTablero" asp-route-idTablero="@tablero.Id"
+                                onclick="return confirm('¿Estás seguro que quieres eliminar el elemento?')"
+                                class="btn btn-danger">Eliminar</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </article>
+    @if (Model.TablerosParticipo.Count != 0)
+    {
+        <article>
+            <h2 class="mt-4">Tableros Ajenos en los que Participas</h2>
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                @foreach (var tablero in Model.TablerosParticipo)
+                {
+                    <div class="col">
+                        <div class="card shadow h-100">
+                            <div class="card-body">
+                                <a asp-area="" asp-controller="Tarea" asp-action="ListarTarea" asp-route-idTablero="@tablero.Id"
+                                    class="text-decoration-none">
+                                    <h5 class="card-title tituloTableroEnlace">@tablero.Nombre</h5>
+                                </a>
+                                <p class="card-text">@tablero.Descripcion</p>
+                                @if (ViewContext.HttpContext.Session.GetString("Rol") == "administrador")
+                                {
+                                    <a asp-controller="Tablero" asp-action="ModificarTablero" asp-route-idTablero="@tablero.Id"
+                                        class="btn btn-warning">Modificar</a>
+                                    <a asp-controller="Tablero" asp-action="EliminarTablero" asp-route-idTablero="@tablero.Id"
+                                        onclick="return confirm('¿Estás seguro que quieres eliminar el elemento?')"
+                                        class="btn btn-danger">Eliminar</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </article>
+    }
+    @if (Model.TablerosAjenos.Count != 0 && ViewContext.HttpContext.Session.GetString("Rol") == "administrador")
+    {
+        <article>
+            <h2 class="mt-4">Tableros Ajenos</h2>
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                @foreach (var tablero in Model.TablerosAjenos)
+                {
+                    <div class="col">
+                        <div class="card shadow h-100">
+                            <div class="card-body">
+                                <a asp-area="" asp-controller="Tarea" asp-action="ListarTarea" asp-route-idTablero="@tablero.Id"
+                                    class="text-decoration-none">
+                                    <h5 class="card-title tituloTableroEnlace">@tablero.Nombre</h5>
+                                </a>
+                                <p class="card-text">@tablero.Descripcion</p>
+                                <a asp-controller="Tablero" asp-action="ModificarTablero" asp-route-idTablero="@tablero.Id"
+                                    class="btn btn-warning">Modificar</a>
+                                <a asp-controller="Tablero" asp-action="EliminarTablero" asp-route-idTablero="@tablero.Id"
+                                    onclick="return confirm('¿Estás seguro que quieres eliminar el elemento?')"
+                                    class="btn btn-danger">Eliminar</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </article>
+    }
+</section>
