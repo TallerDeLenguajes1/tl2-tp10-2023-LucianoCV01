@@ -20,93 +20,141 @@ public class UsuarioController : Controller
     [HttpGet]
     public IActionResult ListarUsuario()
     {
-        if (!isLogin())
+        try
         {
-            return RedirectToRoute(new { controller = "Home", action = "Error404" });
-        }
-        int idUsuario = idEnSession();
-        Usuario usuario = _repositorioUsuario.GetById(idUsuario);
-        List<Usuario> usuarios = new();
-        if (isAdmin())
-        {
-            usuarios = _repositorioUsuario.GetAll();
-            Usuario usuarioExistente = usuarios.FirstOrDefault(u => u.Id == usuario.Id)!;
-
-            if (usuarioExistente != null)
+            if (!isLogin())
             {
-                usuarios.Remove(usuarioExistente);
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
             }
+            int idUsuario = idEnSession();
+            Usuario usuario = _repositorioUsuario.GetById(idUsuario);
+            List<Usuario> usuarios = new();
+            if (isAdmin())
+            {
+                usuarios = _repositorioUsuario.GetAll();
+                Usuario usuarioExistente = usuarios.FirstOrDefault(u => u.Id == usuario.Id)!;
+
+                if (usuarioExistente != null)
+                {
+                    usuarios.Remove(usuarioExistente);
+                }
+            }
+            usuarios.Insert(0, usuario);
+            ListarUsuarioViewModel listarUsuarioViewModel = new(usuarios);
+            return View(listarUsuarioViewModel);
         }
-        usuarios.Insert(0, usuario);
-        ListarUsuarioViewModel listarUsuarioViewModel = new(usuarios);
-        return View(listarUsuarioViewModel);
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error al intentar listar los usuarios {ex.ToString()}");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
+        }
     }
     // Controlador CREAR
     [HttpGet]
     public IActionResult CrearUsuario()
     {
-        CrearUsuarioViewModel crearUsuarioViewModel = new();
-        return View(crearUsuarioViewModel);
+        try
+        {
+            CrearUsuarioViewModel crearUsuarioViewModel = new();
+            return View(crearUsuarioViewModel);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error al intentar crear un usuario {ex.ToString()}");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
+        }
     }
     [HttpPost]
     public IActionResult CrearUsuario(CrearUsuarioViewModel u)
     {
-        if (!ModelState.IsValid)
+        try
         {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("ListarUsuario");
+            }
+            Usuario usuario = new(u);
+            _repositorioUsuario.Create(usuario);
+            if (!isAdmin())
+            {
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            }
             return RedirectToAction("ListarUsuario");
         }
-        Usuario usuario = new(u);
-        _repositorioUsuario.Create(usuario);
-        if (!isAdmin())
+        catch (Exception ex)
         {
-            return RedirectToRoute(new { controller = "Login", action = "Index" });
+            _logger.LogError($"Error al intentar crear un usuario {ex.ToString()}");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
         }
-        return RedirectToAction("ListarUsuario");
     }
     // Controlador MODIFICAR
     [HttpGet]
     public IActionResult ModificarUsuario(int idUsuario)
     {
-        if (!isLogin())
+        try
         {
-            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            if (!isLogin())
+            {
+                return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            }
+            if (!isAdmin() && idEnSession() != idUsuario)
+            {
+                return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            }
+            Usuario usuarioModificar = _repositorioUsuario.GetById(idUsuario);
+            ModificarUsuarioViewModel modificarUsuarioViewModelnew = new(usuarioModificar);
+            return View(modificarUsuarioViewModelnew);
         }
-        if (!isAdmin() && idEnSession() != idUsuario)
+        catch (Exception ex)
         {
-            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            _logger.LogError($"Error al intentar modificar un usuario {ex.ToString()}");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
         }
-        Usuario usuarioModificar = _repositorioUsuario.GetById(idUsuario);
-        ModificarUsuarioViewModel modificarUsuarioViewModelnew = new(usuarioModificar);
-        return View(modificarUsuarioViewModelnew);
     }
     [HttpPost]
     public IActionResult ModificarUsuario(ModificarUsuarioViewModel u)
     {
-        if (!isLogin())
+        try
         {
-            return RedirectToRoute(new { controller = "Home", action = "Error404" });
-        }
-        if (!ModelState.IsValid)
-        {
+            if (!isLogin())
+            {
+                return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            }
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("ListarUsuario");
+            }
+            Usuario usuario = new(u);
+            _repositorioUsuario.Update(usuario.Id, usuario);
             return RedirectToAction("ListarUsuario");
         }
-        Usuario usuario = new(u);
-        _repositorioUsuario.Update(usuario.Id, usuario);
-        return RedirectToAction("ListarUsuario");
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error al intentar modificar un usuario {ex.ToString()}");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
+        }
     }
     // Controlador ELIMINAR
     public IActionResult EliminarUsuario(int idUsuario)
     {
-        if (!isLogin())
+        try
         {
-            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            if (!isLogin())
+            {
+                return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            }
+            if (!isAdmin() && idEnSession() != idUsuario)
+            {
+                return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            }
+            _repositorioUsuario.Delete(idUsuario);
+            return RedirectToAction("ListarUsuario");
         }
-        if (!isAdmin() && idEnSession() != idUsuario)
+        catch (Exception ex)
         {
-            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            _logger.LogError($"Error al intentar eliminar un usuario {ex.ToString()}");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
         }
-        _repositorioUsuario.Delete(idUsuario);
-        return RedirectToAction("ListarUsuario");
     }
 
     private bool isLogin()

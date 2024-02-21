@@ -12,24 +12,24 @@
             <h2 class="mt-4 mb-4">Usuario</h2>
         }
 
-        <div class="row">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
             @foreach (var usuario in Model.Usuarios)
             {
                 @if (usuario.Id != -9999)
                 {
-                    <div class="col-md-3 col-6 mb-4">
-                        <div class="card shadow">
+                    <div class="col">
+                        <div class="card shadow h-100">
                             <div class="card-body">
                                 <h5 class="card-title">@usuario.NombreDeUsuario</h5>
                                 <h6 class="card-subtitle mb-2 text-body-secondary">@usuario.Rol</h6>
 
                                 <a asp-controller="Usuario" asp-action="ModificarUsuario" asp-route-idUsuario="@usuario.Id"
-                                    class="btn btn-warning mt-1 mr-1">Modificar</a>
+                                    class="btn btn-warning">Modificar</a>
                                 @if (usuario.Rol.ToString() != "administrador")
                                 {
                                     <a asp-controller="Usuario" asp-action="EliminarUsuario" asp-route-idUsuario="@usuario.Id"
                                         onclick="return confirm('¿Estás seguro que quieres eliminar el elemento?')"
-                                        class="btn btn-danger mt-1">Eliminar</a>
+                                        class="btn btn-danger">Eliminar</a>
                                 }
                             </div>
                         </div>

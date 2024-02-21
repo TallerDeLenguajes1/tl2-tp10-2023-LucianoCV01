@@ -22,28 +22,49 @@ public class LoginController : Controller
     }
     public IActionResult Login(Usuario usuario)
     {
-        if (!ModelState.IsValid)
+        try
         {
-            return RedirectToAction("Index");
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Index");
+            }
+            //existe el usuario?
+            List<Usuario> usuarios = _repositorioUsuario.GetAll();
+            var usuarioLogin = usuarios.FirstOrDefault(u => u.NombreDeUsuario == usuario.NombreDeUsuario && u.Contrasenia == usuario.Contrasenia);
+            // si el usuario no existe devuelvo al index
+            if (usuarioLogin == null)
+            {
+                _logger.LogWarning($"Intento de acceso invalido - Usuario: {usuario.NombreDeUsuario}, Clave ingresada: {usuario.Contrasenia}");
+                return RedirectToAction("Index");
+            }
+            //Registro el usuario
+            logearUsuario(usuarioLogin);
+            _logger.LogInformation($"El usuario {usuarioLogin.NombreDeUsuario} ingreso correctamente");
+            //Devuelvo el usuario al Home
+            return RedirectToRoute(new { controller = "Home", action = "Index" });
         }
-        //existe el usuario?
-        List<Usuario> usuarios = _repositorioUsuario.GetAll();
-        var usuarioLogin = usuarios.FirstOrDefault(u => u.NombreDeUsuario == usuario.NombreDeUsuario && u.Contrasenia == usuario.Contrasenia);
-        // si el usuario no existe devuelvo al index
-        if (usuarioLogin == null) return RedirectToAction("Index");
-        //Registro el usuario
-        logearUsuario(usuarioLogin);
-        //Devuelvo el usuario al Home
-        return RedirectToRoute(new { controller = "Home", action = "Index" });
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error al intentar iniciar sesion {ex.ToString()}");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
+        }
     }
     public IActionResult CerrarSesion()
     {
-        if (!isLogin())
+        try
         {
-            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            if (!isLogin())
+            {
+                return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            }
+            HttpContext.Session.Clear();
+            return RedirectToRoute(new { controller = "Home", action = "Index" });
         }
-        HttpContext.Session.Clear();
-        return RedirectToRoute(new { controller = "Home", action = "Index" });
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error al intentar cerrar sesion {ex.ToString()}");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
+        }
     }
 
     private void logearUsuario(Usuario usuario)

@@ -72,3 +72,7 @@ main {
 .tituloEstado {
   margin-top: 32px;
 }
+
+.navbar-toggler {
+  background-color: whitesmoke;
+}

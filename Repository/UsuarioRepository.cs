@@ -60,7 +60,11 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 }
                 connection.Close();
             }
-            return usuario; // Lanzar excepcion de error como nulo
+            if (usuario == null)
+            {
+                throw new Exception("Usuario que se busca no existe.");
+            }
+            return usuario;
         }
         public void Create(Usuario usuario)
         {
@@ -78,7 +82,10 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         }
         public void Update(int id, Usuario usuario)
         {
-            // lanzar excepcion por si no existe el usuario a modificar
+            if (!ExisteUsuario(id))
+            {
+                throw new Exception($"El usuario que se intenta modificar no existe.");
+            }
             const string queryString = $"UPDATE Usuario SET nombreDeUsuario = (@name), contrasenia = (@pass), rol = (@rol) WHERE id = (@id);";
             using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
@@ -94,7 +101,10 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         }
         public void Delete(int id)
         {
-            // lanzar excepcion si el usuario a eliminar no existe
+            if (!ExisteUsuario(id))
+            {
+                throw new Exception($"El usuario que se intenta eliminar no existe.");
+            }
             const string queryString = $"DELETE FROM Usuario WHERE id = @id;";
             using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
@@ -103,6 +113,18 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 connection.Open();
                 command.ExecuteNonQuery();
                 connection.Close();
+            }
+        }
+        private bool ExisteUsuario(int id)
+        {
+            try
+            {
+                GetById(id);
+                return true; // Si no lanza excepción, el tablero existe
+            }
+            catch (Exception)
+            {
+                return false; // Si lanza excepción, el tablero no existe
             }
         }
     }

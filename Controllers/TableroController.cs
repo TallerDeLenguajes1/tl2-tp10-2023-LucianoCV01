@@ -22,108 +22,156 @@ public class TableroController : Controller
     [HttpGet]
     public IActionResult ListarTablero()
     {
-        if (!isLogin())
+        try
         {
-            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            if (!isLogin())
+            {
+                return RedirectToRoute(new { controller = "Login", action = "Index" });
+            }
+            int idUsuario = idEnSession();
+            List<Tablero> tablerosPropios = _repositorioTablero.GetByIdUsuario(idUsuario);
+            List<Tablero> tablerosParticipando = _repositorioTablero.GetByIdUsuarioParticipante(idUsuario);
+            List<Tablero> tablerosAjenos = _repositorioTablero.GetByIdUsuarioAjenos(idUsuario);
+            ListarTableroViewModel listarTableroViewModel = new(tablerosPropios, tablerosParticipando, tablerosAjenos);
+            return View(listarTableroViewModel);
         }
-        int idUsuario = idEnSession();
-        List<Tablero> tablerosPropios = _repositorioTablero.GetByIdUsuario(idUsuario);
-        List<Tablero> tablerosParticipando = _repositorioTablero.GetByIdUsuarioParticipante(idUsuario);
-        List<Tablero> tablerosAjenos = _repositorioTablero.GetByIdUsuarioAjenos(idUsuario);
-        ListarTableroViewModel listarTableroViewModel = new(tablerosPropios, tablerosParticipando, tablerosAjenos);
-        return View(listarTableroViewModel);
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error al intentar listar los tableros {ex.ToString()}");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
+        }
     }
     // Controlador CREAR
     [HttpGet]
     public IActionResult CrearTablero()
     {
-        if (!isLogin())
+        try
         {
-            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            if (!isLogin())
+            {
+                return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            }
+            CrearTableroViewModel crearTableroViewModel = new();
+            List<Usuario> usuarios = _repositorioUsuario.GetAll();
+            ListarUsuarioViewModel usuariosDisponibles = new(usuarios);
+            UsuarioViewModel usuarioSession = usuariosDisponibles.Usuarios.FirstOrDefault(u => u.Id == idEnSession())!;
+            if (usuarioSession != null)
+            {
+                usuariosDisponibles.Usuarios.Remove(usuarioSession);
+                usuariosDisponibles.Usuarios.Insert(0, usuarioSession);
+            }
+            crearTableroViewModel.UsuariosDisponibles = usuariosDisponibles.Usuarios;
+            return View(crearTableroViewModel);
         }
-        CrearTableroViewModel crearTableroViewModel = new();
-        List<Usuario> usuarios = _repositorioUsuario.GetAll();
-        ListarUsuarioViewModel usuariosDisponibles = new(usuarios);
-        UsuarioViewModel usuarioSession = usuariosDisponibles.Usuarios.FirstOrDefault(u => u.Id == idEnSession())!;
-        if (usuarioSession != null)
+        catch (Exception ex)
         {
-            usuariosDisponibles.Usuarios.Remove(usuarioSession);
-            usuariosDisponibles.Usuarios.Insert(0, usuarioSession);
+            _logger.LogError($"Error al intentar crear un tablero {ex.ToString()}");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
         }
-        crearTableroViewModel.UsuariosDisponibles = usuariosDisponibles.Usuarios;
-        return View(crearTableroViewModel);
     }
     [HttpPost]
     public IActionResult CrearTablero(CrearTableroViewModel t)
     {
-        if (!isLogin())
+        try
         {
-            return RedirectToRoute(new { controller = "Home", action = "Error404" });
-        }
-        if (!ModelState.IsValid)
-        {
+            if (!isLogin())
+            {
+                return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            }
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("ListarTablero");
+            }
+            Tablero tablero = new(t);
+            _repositorioTablero.Create(tablero);
             return RedirectToAction("ListarTablero");
         }
-        Tablero tablero = new(t);
-        _repositorioTablero.Create(tablero);
-        return RedirectToAction("ListarTablero");
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error al intentar crear un tablero {ex.ToString()}");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
+        }
     }
     // Controlador MODIFICAR
     [HttpGet]
     public IActionResult ModificarTablero(int idTablero)
     {
-        if (!isLogin())
+        try
         {
-            return RedirectToRoute(new { controller = "Home", action = "Error404" });
-        }
-        Tablero tableroModificar = _repositorioTablero.GetById(idTablero);
-        if (!isAdmin() && idEnSession() != tableroModificar.IdUsuarioPropietario)
-        {
-            return RedirectToRoute(new { controller = "Home", action = "Error404" });
-        }
-        ModificarTableroViewModel modificarTableroViewModel = new(tableroModificar);
+            if (!isLogin())
+            {
+                return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            }
+            Tablero tableroModificar = _repositorioTablero.GetById(idTablero);
+            if (!isAdmin() && idEnSession() != tableroModificar.IdUsuarioPropietario)
+            {
+                return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            }
+            ModificarTableroViewModel modificarTableroViewModel = new(tableroModificar);
 
-        List<Usuario> usuarios = _repositorioUsuario.GetAll();
-        ListarUsuarioViewModel usuariosDisponibles = new(usuarios);
-        UsuarioViewModel usuarioSession = usuariosDisponibles.Usuarios.FirstOrDefault(u => u.Id == idEnSession())!;
-        if (usuarioSession != null)
-        {
-            usuariosDisponibles.Usuarios.Remove(usuarioSession);
-            usuariosDisponibles.Usuarios.Insert(0, usuarioSession);
-        }
-        modificarTableroViewModel.UsuariosDisponibles = usuariosDisponibles.Usuarios;
+            List<Usuario> usuarios = _repositorioUsuario.GetAll();
+            ListarUsuarioViewModel usuariosDisponibles = new(usuarios);
+            UsuarioViewModel usuarioSession = usuariosDisponibles.Usuarios.FirstOrDefault(u => u.Id == idEnSession())!;
+            if (usuarioSession != null)
+            {
+                usuariosDisponibles.Usuarios.Remove(usuarioSession);
+                usuariosDisponibles.Usuarios.Insert(0, usuarioSession);
+            }
+            modificarTableroViewModel.UsuariosDisponibles = usuariosDisponibles.Usuarios;
 
-        return View(modificarTableroViewModel);
+            return View(modificarTableroViewModel);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error al intentar modificar un tablero {ex.ToString()}");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
+        }
     }
     [HttpPost]
     public IActionResult ModificarTablero(ModificarTableroViewModel t)
     {
-        if (!isLogin())
+        try
         {
-            return RedirectToRoute(new { controller = "Home", action = "Error404" });
-        }
-        if (!ModelState.IsValid)
-        {
+            if (!isLogin())
+            {
+                return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            }
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("ListarTablero");
+            }
+            Tablero tablero = new(t);
+            _repositorioTablero.Update(tablero.Id, tablero);
             return RedirectToAction("ListarTablero");
         }
-        Tablero tablero = new(t);
-        _repositorioTablero.Update(tablero.Id, tablero);
-        return RedirectToAction("ListarTablero");
+        catch (Exception ex)
+        {
+            _logger.LogError($"Error al intentar modificar un tablero {ex.ToString()}");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
+        }
     }
     // Controlador ELIMINAR 
     public IActionResult EliminarTablero(int idTablero)
     {
-        if (!isLogin())
+        try
         {
-            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            if (!isLogin())
+            {
+                return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            }
+            Tablero tablero = _repositorioTablero.GetById(idTablero);
+            if (!isAdmin() && idEnSession() != tablero.IdUsuarioPropietario)
+            {
+                return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            }
+            _repositorioTablero.Delete(idTablero);
+            return RedirectToAction("ListarTablero");
         }
-        Tablero tablero = _repositorioTablero.GetById(idTablero);
-        if (!isAdmin() && idEnSession() != tablero.IdUsuarioPropietario)
+        catch (Exception ex)
         {
-            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            _logger.LogError($"Error al intentar eliminar un tablero {ex.ToString()}");
+            return RedirectToRoute(new { controller = "Home", action = "Error" });
         }
-        _repositorioTablero.Delete(idTablero);
-        return RedirectToAction("ListarTablero");
     }
 
     private bool isLogin()

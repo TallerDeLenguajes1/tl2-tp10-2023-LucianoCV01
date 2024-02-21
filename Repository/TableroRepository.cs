@@ -60,7 +60,11 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 }
                 connection.Close();
             };
-            return tablero; // lanzar excepcion si el tablero que se busca no existe
+            if (tablero == null)
+            {
+                throw new Exception("Tablero que se busca no existe.");
+            }
+            return tablero;
         }
         public List<Tablero> GetByIdUsuario(int idUsuario)
         {
@@ -196,7 +200,10 @@ AND Tablero.idUsuarioPropietario != @participante;
         }
         public void Update(int id, Tablero tablero)
         {
-            // lanzar excepcion si el tablero que quiero actualizar no existe.
+            if (!ExisteTablero(id))
+            {
+                throw new Exception($"El tablero que se intenta actualizar no existe.");
+            }
             const string queryString = $"UPDATE Tablero SET idUsuarioPropietario = (@usuario), nombre = (@name), descripcion = (@descripcion) WHERE id = (@id);";
             using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
@@ -212,7 +219,10 @@ AND Tablero.idUsuarioPropietario != @participante;
         }
         public void Delete(int id)
         {
-            // lanzar excepcion si el tablero a eliminar no existe.
+            if (!ExisteTablero(id))
+            {
+                throw new Exception($"El tablero que se intenta eliminar no existe.");
+            }
             const string queryString = $"DELETE FROM Tablero WHERE id = @id;";
             using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
@@ -221,6 +231,18 @@ AND Tablero.idUsuarioPropietario != @participante;
                 connection.Open();
                 command.ExecuteNonQuery();
                 connection.Close();
+            }
+        }
+        private bool ExisteTablero(int id)
+        {
+            try
+            {
+                GetById(id);
+                return true; // Si no lanza excepción, el tablero existe
+            }
+            catch (Exception)
+            {
+                return false; // Si lanza excepción, el tablero no existe
             }
         }
     }

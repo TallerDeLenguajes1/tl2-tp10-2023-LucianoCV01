@@ -31,8 +31,13 @@
                                 tarea.IdUsuarioAsignado)?.NombreDeUsuario</b></h6>
                                 <p class="card-text">@tarea.Descripcion</p>
 
-                                <a asp-controller="Tarea" asp-action="ModificarTarea" asp-route-idTarea="@tarea.Id" class="btn
+                                @if (ViewContext.HttpContext.Session.GetString("Rol") == "administrador" ||
+                               ViewContext.HttpContext.Session.GetInt32("Id") == Model.IdDuenio ||
+                               ViewContext.HttpContext.Session.GetInt32("Id") == tarea.IdUsuarioAsignado)
+                                {
+                                    <a asp-controller="Tarea" asp-action="ModificarTarea" asp-route-idTarea="@tarea.Id" class="btn
                                     btn-warning">Modificar</a>
+                                }
                                 @if (ViewContext.HttpContext.Session.GetString("Rol") == "administrador" ||
                                ViewContext.HttpContext.Session.GetInt32("Id") == Model.IdDuenio)
                                 {
