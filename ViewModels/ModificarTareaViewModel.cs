@@ -19,6 +19,8 @@ namespace tl2_tp10_2023_LucianoCV01.ViewModels
             Color = tarea.Color;
             IdUsuarioAsignado = tarea.IdUsuarioAsignado;
         }
+        public int IdDuenio { get; set; }
+        public List<UsuarioViewModel>? UsuariosDisponibles { get; set; }
 
         [Required(ErrorMessage = "Este campo es requerido.")]
         [Display(Name = "Id")]

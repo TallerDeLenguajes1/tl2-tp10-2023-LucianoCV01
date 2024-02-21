@@ -152,7 +152,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
         public void Update(int id, Tarea tarea)
         {
             // lanzar excepcion si la tarea que se quiere update no existe.
-            const string queryString = $"UPDATE Tarea SET nombre = (@name), estado = (@estado), descripcion = (@descripcion), color = (@color) WHERE id = (@id);";
+            const string queryString = $"UPDATE Tarea SET nombre = (@name), estado = (@estado), descripcion = (@descripcion), color = (@color), idUsuarioAsignado = (@asignado) WHERE id = (@id);";
             using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
             {
                 SqliteCommand command = new SqliteCommand(queryString, connection);
@@ -160,6 +160,7 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 command.Parameters.Add(new SqliteParameter("@estado", Convert.ToInt32(tarea.Estado)));
                 command.Parameters.Add(new SqliteParameter("@descripcion", tarea.Descripcion != null ? tarea.Descripcion : ""));
                 command.Parameters.Add(new SqliteParameter("@color", Convert.ToInt32(tarea.Color)));
+                command.Parameters.Add(new SqliteParameter("@asignado", Convert.ToInt32(tarea.IdUsuarioAsignado)));
                 command.Parameters.Add(new SqliteParameter("@id", id));
                 connection.Open();
                 command.ExecuteNonQuery();

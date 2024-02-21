@@ -41,7 +41,7 @@ public class TareaController : Controller
         }
         int tableroDuenio = _repositorioTablero.GetById(idTablero).IdUsuarioPropietario;
         List<Tarea> tareas = _repositorioTarea.GetByIdTablero(idTablero);
-        List <Usuario> usuarios = _repositorioUsuario.GetAll();
+        List<Usuario> usuarios = _repositorioUsuario.GetAll();
         ListarTareaViewModel listarTareaViewModel = new(idTablero, tableroDuenio, usuarios, tareas);
         return View(listarTareaViewModel);
     }
@@ -86,6 +86,17 @@ public class TareaController : Controller
         }
         Tarea tareaModificar = _repositorioTarea.GetById(idTarea);
         ModificarTareaViewModel modificarTareaViewModel = new(tareaModificar);
+        int tableroDuenio = _repositorioTablero.GetById(tareaModificar.IdTablero).IdUsuarioPropietario;
+        modificarTareaViewModel.IdDuenio = tableroDuenio;
+        if (!isAdmin() && idEnSession() != tableroDuenio)
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
+
+        List<Usuario> usuarios = _repositorioUsuario.GetAll();
+        ListarUsuarioViewModel usuariosDisponibles = new(usuarios);
+        modificarTareaViewModel.UsuariosDisponibles = usuariosDisponibles.Usuarios;
+
         return View(modificarTareaViewModel);
     }
     [HttpPost]
@@ -107,6 +118,12 @@ public class TareaController : Controller
     public IActionResult EliminarTarea(int idTarea)
     {
         if (!isLogin())
+        {
+            return RedirectToRoute(new { controller = "Home", action = "Error404" });
+        }
+        Tarea tarea = _repositorioTarea.GetById(idTarea);
+        Tablero tablero = _repositorioTablero.GetById(tarea.IdTablero);
+        if (!isAdmin() && idEnSession() != tablero.IdUsuarioPropietario)
         {
             return RedirectToRoute(new { controller = "Home", action = "Error404" });
         }
