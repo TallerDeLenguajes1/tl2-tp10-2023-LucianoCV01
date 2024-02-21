@@ -44,6 +44,7 @@ namespace tl2_tp10_2023_LucianoCV01.Models
     }
     public enum ColorEtiqueta
     {
+        White,
         Red,
         Orange,
         Yellow,

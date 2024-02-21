@@ -55,6 +55,10 @@ public class TareaController : Controller
         }
         CrearTareaViewModel crearTareaViewModel = new();
         crearTareaViewModel.IdTablero = idTablero;
+
+        List<Usuario> usuarios = _repositorioUsuario.GetAll();
+        ListarUsuarioViewModel usuariosDisponibles = new(usuarios);
+        crearTareaViewModel.UsuariosDisponibles = usuariosDisponibles.Usuarios;
         return View(crearTareaViewModel);
     }
     [HttpPost]
