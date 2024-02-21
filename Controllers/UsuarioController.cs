@@ -10,11 +10,13 @@ public class UsuarioController : Controller
 {
     private readonly ILogger<UsuarioController> _logger;
     private IUsuarioRepository _repositorioUsuario;
+    private ITableroRepository _repositorioTablero;
 
-    public UsuarioController(ILogger<UsuarioController> logger, IUsuarioRepository repositorioUsuario)
+    public UsuarioController(ILogger<UsuarioController> logger, IUsuarioRepository repositorioUsuario, ITableroRepository repositorioTablero)
     {
         _logger = logger;
         _repositorioUsuario = repositorioUsuario;
+        _repositorioTablero = repositorioTablero;
     }
     // Controlador LISTAR
     [HttpGet]
@@ -147,8 +149,17 @@ public class UsuarioController : Controller
             {
                 return RedirectToRoute(new { controller = "Home", action = "Error404" });
             }
+            HttpContext.Session.Clear();
+            _repositorioUsuario.UpdateIdAsignadoTareas(idUsuario);
+            List<Tablero> tableros = _repositorioTablero.GetByIdUsuario(idUsuario);
+            foreach (var tablero in tableros)
+            {
+                _repositorioTablero.DeleteTareas(tablero.Id);
+            }
+            _repositorioTablero.DeleteTablerosPorUsuario(idUsuario);
             _repositorioUsuario.Delete(idUsuario);
-            return RedirectToAction("ListarUsuario");
+
+            return RedirectToRoute(new { controller = "Home", action = "Index" });
         }
         catch (Exception ex)
         {

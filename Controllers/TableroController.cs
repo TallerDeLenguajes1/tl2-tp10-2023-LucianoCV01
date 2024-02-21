@@ -164,6 +164,7 @@ public class TableroController : Controller
             {
                 return RedirectToRoute(new { controller = "Home", action = "Error404" });
             }
+            _repositorioTablero.DeleteTareas(idTablero);
             _repositorioTablero.Delete(idTablero);
             return RedirectToAction("ListarTablero");
         }

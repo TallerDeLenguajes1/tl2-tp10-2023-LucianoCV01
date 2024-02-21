@@ -99,6 +99,22 @@ namespace tl2_tp10_2023_LucianoCV01.Repository
                 connection.Close();
             }
         }
+        public void UpdateIdAsignadoTareas(int idUsuario)
+        {
+            if (!ExisteUsuario(idUsuario))
+            {
+                throw new Exception($"El usuario que se intenta de modificar sus tareas asignadas no existe.");
+            }
+            const string queryString = $"UPDATE Tarea SET idUsuarioAsignado = -9999 WHERE idUsuarioAsignado = @idUsuario;";
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
+            {
+                SqliteCommand command = new SqliteCommand(queryString, connection);
+                command.Parameters.Add(new SqliteParameter("@idUsuario", idUsuario));
+                connection.Open();
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
         public void Delete(int id)
         {
             if (!ExisteUsuario(id))

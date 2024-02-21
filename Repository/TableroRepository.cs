@@ -233,6 +233,34 @@ AND Tablero.idUsuarioPropietario != @participante;
                 connection.Close();
             }
         }
+        public void DeleteTareas(int id)
+        {
+            if (!ExisteTablero(id))
+            {
+                throw new Exception($"El tablero al que se le intenta eliminar sus tareas no existe.");
+            }
+            const string queryString = $"DELETE FROM Tarea WHERE idTablero = @idTablero;";
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
+            {
+                SqliteCommand command = new SqliteCommand(queryString, connection);
+                command.Parameters.Add(new SqliteParameter("@idTablero", id));
+                connection.Open();
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+        public void DeleteTablerosPorUsuario(int id)
+        {
+            const string queryString = $"DELETE FROM Tablero WHERE idUsuarioPropietario = @idUsuario;";
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
+            {
+                SqliteCommand command = new SqliteCommand(queryString, connection);
+                command.Parameters.Add(new SqliteParameter("@idUsuario", id));
+                connection.Open();
+                command.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
         private bool ExisteTablero(int id)
         {
             try
