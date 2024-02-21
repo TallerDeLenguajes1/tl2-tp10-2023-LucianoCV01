@@ -44,13 +44,11 @@ namespace tl2_tp10_2023_LucianoCV01.Models
     }
     public enum ColorEtiqueta
     {
-        Ninguno,
-        Rojo,
-        Naranja,
-        Amarillo,
-        Verde,
-        Celeste,
-        Azul,
-        Violeta
+        Red,
+        Orange,
+        Yellow,
+        Green,
+        Blue,
+        Violet
     }
 }

@@ -154,6 +154,32 @@ AND Tablero.idUsuarioPropietario != @participante;
             }
             return tableros;
         }
+        public List<Usuario> GetByIdTableroSusParticipantes(int idTablero)
+        {
+            // lanzar excepcion si el usuario propietario no existe
+            // si existe puede que tenga tableros relacionados como no.
+            const string queryString = @"SELECT U.id FROM Usuario U INNER JOIN Tablero T ON U.id = T.idUsuarioPropietario WHERE T.id = @idTablero UNION SELECT DISTINCT U2.id FROM Usuario U2 INNER JOIN Tarea T2 ON U2.id = T2.idUsuarioAsignado WHERE T2.idTablero = @idTablero;";
+            List<Usuario> usuarios = new List<Usuario>();
+            using (SqliteConnection connection = new SqliteConnection(_cadenaConexion))
+            {
+                SqliteCommand command = new SqliteCommand(queryString, connection);
+                command.Parameters.Add(new SqliteParameter("@idTablero", idTablero));
+                connection.Open();
+                using (SqliteDataReader reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        var usuario = new Usuario
+                        {
+                            Id = Convert.ToInt32(reader["id"]),
+                        };
+                        usuarios.Add(usuario);
+                    }
+                }
+                connection.Close();
+            }
+            return usuarios;
+        }
         public void Create(Tablero tablero)
         {
             const string queryString = $"INSERT INTO Tablero (idUsuarioPropietario, nombre, descripcion) VALUES (@usuario, @name, @descripcion)";

@@ -10,11 +10,15 @@ public class TareaController : Controller
 {
     private readonly ILogger<TareaController> _logger;
     private ITareaRepository _repositorioTarea;
+    private ITableroRepository _repositorioTablero;
+    private IUsuarioRepository _repositorioUsuario;
 
-    public TareaController(ILogger<TareaController> logger, ITareaRepository repositorioTarea)
+    public TareaController(ILogger<TareaController> logger, ITareaRepository repositorioTarea, ITableroRepository repositorioTablero, IUsuarioRepository repositorioUsuario)
     {
         _logger = logger;
         _repositorioTarea = repositorioTarea;
+        _repositorioTablero = repositorioTablero;
+        _repositorioUsuario = repositorioUsuario;
     }
     // Controlador LISTAR 
     [HttpGet]
@@ -24,8 +28,21 @@ public class TareaController : Controller
         {
             return RedirectToRoute(new { controller = "Home", action = "Error404" });
         }
+        if (!isAdmin())
+        {
+            List<Usuario> participantes = _repositorioTablero.GetByIdTableroSusParticipantes(idTablero);
+            int idUsuario = idEnSession();
+            var usuarioEncontrado = participantes.FirstOrDefault(u => u.Id == idUsuario);
+
+            if (usuarioEncontrado == null)
+            {
+                return RedirectToRoute(new { controller = "Home", action = "Error404" });
+            }
+        }
+        int tableroDuenio = _repositorioTablero.GetById(idTablero).IdUsuarioPropietario;
         List<Tarea> tareas = _repositorioTarea.GetByIdTablero(idTablero);
-        ListarTareaViewModel listarTareaViewModel = new(idTablero, tareas);
+        List <Usuario> usuarios = _repositorioUsuario.GetAll();
+        ListarTareaViewModel listarTareaViewModel = new(idTablero, tableroDuenio, usuarios, tareas);
         return View(listarTareaViewModel);
     }
     // Controlador CREAR
@@ -101,5 +118,11 @@ public class TareaController : Controller
     private bool isAdmin()
     {
         return isLogin() && HttpContext.Session.GetString("Rol") == "administrador";
+    }
+    private int idEnSession()
+    {
+        int? idUsuarioNullable = HttpContext.Session.GetInt32("Id");
+        int idUsuario = idUsuarioNullable ?? -9999;
+        return idUsuario;
     }
 }

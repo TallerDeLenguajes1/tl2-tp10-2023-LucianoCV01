@@ -34,7 +34,7 @@ body {
   background-color: #100e0f;
 }
 
-.preguntaRegistro{
+.preguntaRegistro {
   padding-right: 14px;
 }
 
@@ -54,10 +54,21 @@ body {
   background-color: #108ccc;
 }
 
-main{
+main {
   min-height: 80vh;
 }
 
 .tituloTableroEnlace {
   color: #108ccc;
+}
+
+.color-preview {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.tituloEstado {
+  margin-top: 32px;
 }
